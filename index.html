@@ -252,7 +252,16 @@
     background:radial-gradient(circle at 50% 40%,#26333f,#0c141b);border-radius:50% 50% 45% 45%}
 
   .valart{background:linear-gradient(135deg,#ff4655,#1f1f2e)}
-  .fortart{background:linear-gradient(135deg,#3b6fe0,#8e46ff)}
+  .sfart{background:radial-gradient(circle at 50% 42%,#1b3a4a,#0a1620 70%);position:relative}
+  .sfart::before{content:'';position:absolute;inset:0;background:
+    repeating-radial-gradient(circle at 50% 42%,transparent 0 24px,rgba(0,217,255,.07) 24px 25px)}
+  .sf-logo{font-family:'Rajdhani';font-weight:700;font-size:24px;color:#fff;letter-spacing:.06em}
+  .sf-logo2{font-family:'Rajdhani';font-weight:700;font-size:24px;color:var(--acc-2);letter-spacing:.06em;margin-top:-6px}
+  .sf-reticle{position:absolute;top:42%;left:50%;width:96px;height:96px;transform:translate(-50%,-50%);
+    border:2px solid var(--acc-2);border-radius:50%;box-shadow:0 0 22px rgba(0,217,255,.4)}
+  .sf-reticle::before,.sf-reticle::after{content:'';position:absolute;background:var(--acc)}
+  .sf-reticle::before{left:50%;top:-14px;width:2px;height:124px;transform:translateX(-50%);opacity:.55}
+  .sf-reticle::after{top:50%;left:-14px;height:2px;width:124px;transform:translateY(-50%);opacity:.55}  .fortart{background:linear-gradient(135deg,#3b6fe0,#8e46ff)}
   .apexart{background:linear-gradient(135deg,#c8202f,#1a1a1a)}
   .val-logo,.fort-logo,.apex-logo{font-family:'Rajdhani';font-weight:700;color:#fff;letter-spacing:.08em;font-size:19px;text-shadow:0 2px 6px rgba(0,0,0,.5)}
 
@@ -446,6 +455,16 @@
     <div class="lib-head"><h2>Obľúbené hry</h2><span class="sub">// klikni pre tréningy</span></div>
     <div class="library">
 
+      <!-- Sens Finder -->
+      <div class="cover live" onclick="go('sensfinder')">
+        <div class="cover-art sfart">
+          <div class="cover-fav" style="color:var(--acc-2)">◎</div>
+          <div class="cover-logo"><span class="sf-logo">SENS</span><span class="sf-logo2">FINDER</span></div>
+          <div class="sf-reticle"></div>
+        </div>
+        <div class="cover-foot"><span class="hrs">nástroj</span><span class="play">NÁJSŤ ▸</span></div>
+      </div>
+
       <!-- CS2 -->
       <div class="cover live" onclick="go('cs2')">
         <div class="cover-art cs2art">
@@ -586,6 +605,47 @@
           <div class="toggle-row"><span>Terč sa pohybuje</span><label class="switch"><input id="cMove2" type="checkbox" onchange="syncFromArena();liveApply()"><span class="slider"></span></label></div>
           <div class="toggle-row" style="border-bottom:1px solid var(--line)"><span>Len counter-strafe</span><label class="switch"><input id="cOnly2" type="checkbox" onchange="syncFromArena();liveApply()"><span class="slider"></span></label></div>
           <button class="btn primary sm" style="width:100%;margin-top:16px" onclick="startMode('strafe')">↻ Reštart</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SENS FINDER -->
+  <section id="sensfinder" class="view">
+    <div class="section-head"><button class="btn ghost sm" onclick="go('hub')">◂ Hub</button><h2>Sens <span style="color:var(--acc-2)">·</span> Finder</h2><span class="sub">// nájde tvoju ideálnu citlivosť</span></div>
+
+    <div class="panel-box" id="sfIntro">
+      <h3>Ako to funguje</h3>
+      <p class="hint" style="margin-bottom:18px">Flickneš na terč a klikneš. Nástroj meria, či <b style="color:var(--bad)">prestreľuješ (overflick)</b> alebo <b style="color:var(--acc-2)">nedoletíš (underflick)</b>, a po každom flicku ti jemne upraví citlivosť — stále bližšie k tvojmu optimu. Terče striedajú veľkosti (malé aj veľké), aby test sedel na rôzne situácie. Vychádza z princípu Aimlabs Sens Finder / PSA.</p>
+      <div class="row">
+        <div class="field"><label>Štartovacia sens (CS2)</label><input id="sfStartSens" type="number" step="0.01" value="1.20"></div>
+        <div class="field"><label>DPI</label><input id="sfStartDpi" type="number" step="50" value="800"></div>
+      </div>
+      <div class="field"><label>Počet flickov</label>
+        <select id="sfRounds"><option value="30">30 (rýchle)</option><option value="50" selected>50 (odporúčané)</option><option value="80">80 (presné)</option></select></div>
+      <button class="btn primary" onclick="startSensFinder()">▸ Spustiť Sens Finder</button>
+    </div>
+
+    <div id="sfArenaWrap" style="display:none">
+      <div class="sf-layout">
+        <div>
+          <div class="arena-top">
+            <div class="stat"><div class="k">Flick</div><div class="v acc" id="sfCount">0/50</div></div>
+            <div class="stat"><div class="k">Aktuálna sens</div><div class="v" id="sfSens" style="color:var(--acc-2)">1.20</div></div>
+            <div class="stat"><div class="k">cm/360°</div><div class="v good" id="sfCm">30.0</div></div>
+            <button class="btn ghost exit sm" onclick="stopSensFinder()">✕ Ukončiť</button>
+          </div>
+          <div id="sfArena" class="sf-arena"></div>
+          <div class="sf-bias"><span>← nedoletíš (nižšia)</span><div class="sf-bias-track"><div class="sf-bias-dot" id="sfBiasDot"></div><div class="sf-bias-mid"></div></div><span>prestreľuješ (vyššia) →</span></div>
+        </div>
+        <div class="cs-config" style="position:sticky;top:76px">
+          <h3>📊 Analýza</h3>
+          <div class="kv"><span>Priemerná chyba</span><b id="sfAvgErr">—</b></div>
+          <div class="kv"><span>Overflick</span><b id="sfOver" style="color:var(--bad)">0</b></div>
+          <div class="kv"><span>Underflick</span><b id="sfUnder" style="color:var(--acc-2)">0</b></div>
+          <div class="kv"><span>Presné zásahy</span><b id="sfPerfect" style="color:var(--good)">0</b></div>
+          <div class="kv"><span>Trend sens</span><b id="sfTrend">stabilný</b></div>
+          <p class="hint" style="margin:14px 0 0;font-size:11px">Sens sa upravuje automaticky po každom flicku podľa smeru a veľkosti chyby. Cieľom je, aby sa dot dole ustálil v strede.</p>
         </div>
       </div>
     </div>
