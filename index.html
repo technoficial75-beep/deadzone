@@ -195,6 +195,51 @@
   .userchip button{background:none;border:none;color:var(--muted);cursor:pointer;font-size:11px;padding:0 0 0 4px}
   .userchip button:hover{color:var(--bad)}
 
+  /* hub top + library */
+  .hub-top{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:20px}
+  .hub-actions{margin-left:auto;display:flex;gap:8px}
+  .mini-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:36px}
+  .mini{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+  .mini .k{display:block;color:var(--muted);font-size:10px;letter-spacing:.14em;text-transform:uppercase}
+  .mini .v{display:block;font-family:'Rajdhani';font-size:26px;font-weight:700;color:var(--acc);margin-top:2px}
+  .mini .v.gr{color:var(--good)} .mini .v.cy{color:var(--acc-2)}
+  .lib-head{display:flex;align-items:baseline;gap:14px;margin-bottom:20px}
+  .lib-head h2{font-size:26px} .lib-head .sub{color:var(--muted);font-size:12px}
+  .library{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:20px}
+
+  .cover{border-radius:16px;overflow:hidden;cursor:pointer;background:var(--panel);border:1px solid var(--line);
+    transition:.2s;box-shadow:0 6px 18px rgba(0,0,0,.35)}
+  .cover.live:hover{transform:translateY(-6px) scale(1.02);border-color:var(--acc);box-shadow:0 14px 34px rgba(255,91,46,.28)}
+  .cover.locked{opacity:.62;cursor:not-allowed}
+  .cover-art{position:relative;aspect-ratio:3/4;overflow:hidden;display:flex;align-items:flex-start;justify-content:flex-start}
+  .cover-fav{position:absolute;top:10px;right:12px;color:#ffd84d;font-size:18px;filter:drop-shadow(0 1px 3px rgba(0,0,0,.6));z-index:3}
+  .cover-logo{position:absolute;top:16px;left:14px;z-index:2;display:flex;flex-direction:column;line-height:.92}
+  .soon-badge{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-8deg);
+    background:rgba(0,0,0,.6);border:1px solid var(--line);color:var(--ink);font-family:'Rajdhani';font-weight:700;
+    letter-spacing:.2em;font-size:14px;padding:8px 16px;border-radius:8px;z-index:3}
+  .cover-foot{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;background:var(--panel-2);border-top:1px solid var(--line)}
+  .cover-foot .hrs{color:var(--muted);font-size:12px}
+  .cover-foot .play{color:var(--acc);font-family:'Rajdhani';font-weight:700;font-size:13px;letter-spacing:.1em}
+  .cover-foot .play.dim{color:var(--muted)}
+
+  /* CS2 cover art */
+  .cs2art{background:linear-gradient(135deg,#ff7a2e 0%,#e85d1a 45%,#7a2f0c 100%)}
+  .cs2art::before{content:'';position:absolute;inset:0;background:
+    repeating-linear-gradient(115deg,rgba(255,255,255,.06) 0 2px,transparent 2px 26px)}
+  .cs-counter{font-family:'Rajdhani';font-weight:700;font-size:22px;letter-spacing:.04em;color:#fff;font-style:italic}
+  .cs-strike{font-family:'Rajdhani';font-weight:700;font-size:22px;letter-spacing:.04em;color:#fff;font-style:italic;margin-top:-4px}
+  .cs-2{font-family:'Rajdhani';font-weight:700;font-size:40px;color:#0e1b24;position:absolute;right:-2px;top:-6px;text-shadow:0 2px 0 rgba(255,255,255,.25)}
+  .cover-soldier{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:74%;height:66%;
+    background:radial-gradient(ellipse at 50% 30%,#1a2530 0%,#0d1620 60%,transparent 72%);
+    clip-path:polygon(30% 0,70% 0,82% 40%,78% 100%,22% 100%,18% 40%);opacity:.92}
+  .cover-soldier::after{content:'';position:absolute;top:16%;left:50%;transform:translateX(-50%);width:34%;height:34%;
+    background:radial-gradient(circle at 50% 40%,#26333f,#0c141b);border-radius:50% 50% 45% 45%}
+
+  .valart{background:linear-gradient(135deg,#ff4655,#1f1f2e)}
+  .fortart{background:linear-gradient(135deg,#3b6fe0,#8e46ff)}
+  .apexart{background:linear-gradient(135deg,#c8202f,#1a1a1a)}
+  .val-logo,.fort-logo,.apex-logo{font-family:'Rajdhani';font-weight:700;color:#fff;letter-spacing:.08em;font-size:19px;text-shadow:0 2px 6px rgba(0,0,0,.5)}
+
   .footer{border-top:1px solid var(--line);padding:26px;text-align:center;color:var(--muted);font-size:12px;letter-spacing:.1em}
   @media(max-width:820px){.about,.games,.mode-grid,.row,.hub-grid,.stat-grid,.cs-layout{grid-template-columns:1fr}
     nav button:not(.train){display:none}.crosshair-bg{display:none}.cs-config{position:static}}
@@ -289,10 +334,7 @@
 <header>
   <div class="logo" onclick="go('home')"><span class="dot"></span>DEADZONE</div>
   <nav>
-    <button id="nav-home" class="active" onclick="go('home')">Home</button>
-    <button id="nav-about" onclick="go('about')">O nás</button>
-    <button id="nav-hub" onclick="go('hub')">Hub</button>
-    <button id="nav-train" class="train" onclick="go('train')">Training ▸</button>
+    <button id="nav-hub" class="train" onclick="go('hub')">⌂ Hub</button>
     <div class="userchip" id="userchip" style="display:none"><span class="pic" id="chipPic">R</span><small id="chipName">hráč</small><button onclick="signOut()" title="Odhlásiť">⏻</button></div>
   </nav>
 </header>
@@ -300,7 +342,7 @@
 <main>
 
   <!-- HOME -->
-  <section id="home" class="view active">
+  <section id="home" class="view">
     <div class="hero">
       <svg class="crosshair-bg" viewBox="0 0 100 100" fill="none">
         <circle cx="50" cy="50" r="30" stroke="#ff5b2e" stroke-width="1" opacity=".6"/>
@@ -340,7 +382,7 @@
 
   <!-- SETUP -->
   <section id="setup" class="view">
-    <div class="section-head"><h2>Nastavenia profilu</h2><span class="sub">// ulož a pokračuj do Hubu</span></div>
+    <div class="section-head"><button class="btn ghost sm" onclick="go('hub')">◂ Hub</button><h2>Nastavenia profilu</h2><span class="sub">// ulož a pokračuj do Hubu</span></div>
     <div class="panel-box">
       <h3>Profil</h3><p class="hint">Tvoje meno a hra na tréning.</p>
       <div class="row">
@@ -363,43 +405,71 @@
   </section>
 
   <!-- HUB -->
-  <section id="hub" class="view">
-    <div class="section-head"><h2>Hub</h2><span class="sub">// tvoj profil a štatistiky</span></div>
-    <div class="hub-grid">
-      <div class="panel-box" style="margin:0">
-        <div class="profile">
-          <div class="avatar" id="hubAv">R</div>
-          <div><h3 id="hubName" style="margin:0">ROOKIE</h3><span class="hint" id="hubGame" style="margin:0">CS2 · 30.0 cm/360°</span></div>
-          <button class="btn ghost sm" style="margin-left:auto" onclick="go('setup')">Upraviť</button>
-        </div>
-        <div class="stat-grid" style="margin-top:18px">
-          <div class="stat-card"><div class="k">Najlepšia presnosť</div><div class="v gr" id="stAcc">—</div></div>
-          <div class="stat-card"><div class="k">Najlepší reakčný čas</div><div class="v cy" id="stRt">—</div></div>
-          <div class="stat-card"><div class="k">Best counter-strafe</div><div class="v" id="stCs">—</div></div>
-          <div class="stat-card"><div class="k">Celkom zásahov</div><div class="v cy" id="stHits">0</div></div>
-        </div>
+  <section id="hub" class="view active">
+    <div class="hub-top">
+      <div class="profile">
+        <div class="avatar" id="hubAv">R</div>
+        <div><h3 id="hubName" style="margin:0">ROOKIE</h3><span class="hint" id="hubGame" style="margin:0">CS2 · 30.0 cm/360°</span></div>
       </div>
-      <div class="panel-box" style="margin:0">
-        <h3>Rýchly štart</h3><p class="hint">Skoč rovno do tréningu.</p>
-        <button class="btn primary" style="width:100%;margin-bottom:10px" onclick="go('cs2')">CS2 Training ▸</button>
-        <button class="btn ghost" style="width:100%" onclick="resetStats()">Vynulovať štatistiky</button>
+      <div class="hub-actions">
+        <button class="btn ghost sm" onclick="go('setup')">Nastavenia</button>
+        <button class="btn ghost sm" onclick="resetStats()">Vynulovať staty</button>
       </div>
     </div>
-  </section>
 
-  <!-- TRAIN select -->
-  <section id="train" class="view">
-    <div class="section-head"><h2>Vyber hru</h2><span class="sub">// každá hra má vlastný prepočet sens</span></div>
-    <div class="games">
-      <div class="game" onclick="go('cs2')"><span class="tag live">Live</span><div class="plat">Valve · Source 2</div><h3>CS2</h3><p>Counter-strafe s guličkami, Dust2 doors, reaction time a aim trainer.</p></div>
-      <div class="game locked"><span class="tag soon">Čoskoro</span><div class="plat">Epic · Unreal</div><h3>Fortnite</h3><p>Edit + aim scenáre, prepočet cez ADS a build sens.</p></div>
-      <div class="game locked"><span class="tag soon">Čoskoro</span><div class="plat">Riot</div><h3>Valorant</h3><p>Ekvivalentná citlivosť k CS2, one-tap tréning.</p></div>
+    <div class="mini-stats">
+      <div class="mini"><span class="k">Presnosť</span><span class="v gr" id="stAcc">—</span></div>
+      <div class="mini"><span class="k">Reakcia</span><span class="v cy" id="stRt">—</span></div>
+      <div class="mini"><span class="k">Counter-strafe</span><span class="v" id="stCs">—</span></div>
+      <div class="mini"><span class="k">Zásahy</span><span class="v cy" id="stHits">0</span></div>
+    </div>
+
+    <div class="lib-head"><h2>Obľúbené hry</h2><span class="sub">// klikni pre tréningy</span></div>
+    <div class="library">
+
+      <!-- CS2 -->
+      <div class="cover live" onclick="go('cs2')">
+        <div class="cover-art cs2art">
+          <div class="cover-fav">★</div>
+          <div class="cover-logo"><span class="cs-counter">COUNTER</span><span class="cs-strike">STRIKE</span><span class="cs-2">2</span></div>
+          <div class="cover-soldier"></div>
+        </div>
+        <div class="cover-foot"><span class="hrs" id="hrsCs2">0.0 hodín</span><span class="play">HRAŤ ▸</span></div>
+      </div>
+
+      <!-- Valorant (locked) -->
+      <div class="cover locked">
+        <div class="cover-art valart">
+          <div class="cover-logo"><span class="val-logo">VALORANT</span></div>
+          <div class="soon-badge">ČOSKORO</div>
+        </div>
+        <div class="cover-foot"><span class="hrs">—</span><span class="play dim">zamknuté</span></div>
+      </div>
+
+      <!-- Fortnite (locked) -->
+      <div class="cover locked">
+        <div class="cover-art fortart">
+          <div class="cover-logo"><span class="fort-logo">FORTNITE</span></div>
+          <div class="soon-badge">ČOSKORO</div>
+        </div>
+        <div class="cover-foot"><span class="hrs">—</span><span class="play dim">zamknuté</span></div>
+      </div>
+
+      <!-- Apex (locked) -->
+      <div class="cover locked">
+        <div class="cover-art apexart">
+          <div class="cover-logo"><span class="apex-logo">APEX</span></div>
+          <div class="soon-badge">ČOSKORO</div>
+        </div>
+        <div class="cover-foot"><span class="hrs">—</span><span class="play dim">zamknuté</span></div>
+      </div>
+
     </div>
   </section>
 
   <!-- CS2 hub -->
   <section id="cs2" class="view">
-    <div class="section-head"><h2>CS2 <span style="color:var(--acc)">·</span> Training</h2><span class="sub">// vyber mód</span></div>
+    <div class="section-head"><button class="btn ghost sm" onclick="go('hub')">◂ Hub</button><h2>CS2 <span style="color:var(--acc)">·</span> Training</h2><span class="sub">// vyber mód</span></div>
     <div class="panel-box">
       <h3>Vyber mód</h3><p class="hint">4 tréningové scenáre. Counter-strafe má vlastné nastavenia vpravo pri aréne.</p>
       <div class="mode-grid">
@@ -462,13 +532,12 @@ function saveState(){store.set('dz_profile',JSON.stringify(profile));store.set('
 /* ---------- navigation ---------- */
 function go(id){
   stopMode();
+  const sec=document.getElementById(id);
+  if(!sec){id='hub';}
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
-  if(id==='home')nav('nav-home');
-  if(id==='about')nav('nav-about');
-  if(id==='hub'||id==='setup')nav('nav-hub');
-  if(id==='train'||id==='cs2')nav('nav-train');
+  nav('nav-hub');
   if(id==='hub')renderHub();
   window.scrollTo({top:0,behavior:'smooth'});
 }
@@ -498,32 +567,38 @@ function saveProfile(){
   saveState();updateUserChip();renderHub(); go('hub');
 }
 function renderHub(){
-  document.getElementById('hubName').textContent=profile.name;
-  document.getElementById('hubAv').textContent=profile.name.charAt(0)||'R';
-  document.getElementById('hubGame').textContent=`${profile.game} · ${Number(profile.cm).toFixed(1)} cm/360°`;
-  document.getElementById('stAcc').textContent=stats.bestAcc!=null?stats.bestAcc+'%':'—';
-  document.getElementById('stRt').textContent=stats.bestRt!=null?stats.bestRt+'ms':'—';
-  document.getElementById('stCs').textContent=stats.bestCs!=null?stats.bestCs:'—';
-  document.getElementById('stHits').textContent=stats.totalHits||0;
+  const set=(id,val)=>{const e=document.getElementById(id);if(e)e.textContent=val;};
+  set('hubName',profile.name);
+  set('hubAv',(profile.name||'R').charAt(0));
+  set('hubGame',`${profile.game} · ${Number(profile.cm).toFixed(1)} cm/360°`);
+  set('stAcc',stats.bestAcc!=null?stats.bestAcc+'%':'—');
+  set('stRt',stats.bestRt!=null?stats.bestRt+'ms':'—');
+  set('stCs',stats.bestCs!=null?stats.bestCs:'—');
+  set('stHits',stats.totalHits||0);
+  const hrs=(stats.playSec||0)/3600;
+  set('hrsCs2',hrs.toFixed(1)+' hodín');
+  const chip=document.getElementById('chipPic');if(chip)chip.textContent=(profile.name||'R').charAt(0);
 }
-function resetStats(){stats={bestAcc:null,bestRt:null,bestCs:null,totalHits:0};saveState();renderHub();}
+function resetStats(){const p=stats.playSec||0;stats={bestAcc:null,bestRt:null,bestCs:null,totalHits:0,playSec:p};saveState();renderHub();}
 function recordAcc(a){if(stats.bestAcc==null||a>stats.bestAcc){stats.bestAcc=a;saveState();}}
 function recordRt(t){if(stats.bestRt==null||t<stats.bestRt){stats.bestRt=t;saveState();}}
 function recordCs(s){if(stats.bestCs==null||s>stats.bestCs){stats.bestCs=s;saveState();}}
 function addHits(n){stats.totalHits=(stats.totalHits||0)+n;saveState();}
+function addPlaytime(sec){stats.playSec=(stats.playSec||0)+sec;saveState();}
 
 /* ---------- arena engine ---------- */
 const arena=()=>document.getElementById('arena');
 let raf=null, timers=[], mode=null;
 function clearArena(){if(!arena())return;arena().innerHTML='';timers.forEach(clearInterval);timers.forEach(clearTimeout);timers=[];if(raf)cancelAnimationFrame(raf);raf=null;arena().onmousedown=null;document.onkeydown=null;document.onkeyup=null;}
-function stopMode(){const w=document.getElementById('arenaWrap');if(w)w.style.display='none';const c=document.getElementById('csConfig');if(c)c.style.display='none';const l=document.getElementById('csLayout');if(l)l.style.gridTemplateColumns='1fr';clearArena();mode=null;}
+function stopMode(){if(playStart){addPlaytime(Math.round((Date.now()-playStart)/1000));playStart=0;}const w=document.getElementById('arenaWrap');if(w)w.style.display='none';const c=document.getElementById('csConfig');if(c)c.style.display='none';const l=document.getElementById('csLayout');if(l)l.style.gridTemplateColumns='1fr';clearArena();mode=null;}
+let playStart=0;
 function setStats(k1,v1,k2,v2,k3,v3){
   document.getElementById('s1k').textContent=k1;document.getElementById('s1').textContent=v1;
   document.getElementById('s2k').textContent=k2;document.getElementById('s2').textContent=v2;
   document.getElementById('s3k').textContent=k3;document.getElementById('s3').textContent=v3;
 }
 function startMode(m){
-  mode=m;clearArena();
+  mode=m;clearArena();playStart=Date.now();
   document.getElementById('arenaWrap').style.display='block';
   const cfg=document.getElementById('csConfig');const lay=document.getElementById('csLayout');
   if(m==='strafe'){cfg.style.display='block';lay.style.gridTemplateColumns='1fr 300px';}
@@ -867,7 +942,9 @@ if(sess){const users=loadUsers();const u=users[sess];
 }
 syncProfileToForms();
 updateUserChip();
+renderHub();
 if(!(profile.onboarded && store.get('dz_session'))){ authTab('login');showOverlay(0); }
+else { go('hub'); }
 
 
 </script>
