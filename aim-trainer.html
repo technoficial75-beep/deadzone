@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DEADZONE — Aim Trainer</title>
+<style>
+  :root{
+    --bg:#0a0e12; --panel:#111820; --panel-2:#0d141b; --line:#1e2a35;
+    --ink:#e8eef2; --muted:#7d8a96; --acc:#ff5b2e; --acc-2:#00d9ff;
+    --good:#3ce88b; --bad:#ff3b5c; --grid:#12202b;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    background:radial-gradient(1200px 600px at 50% -10%, #0f1a22 0%, transparent 60%),var(--bg);
+    color:var(--ink);
+    font-family:'DM Mono',ui-monospace,Menlo,Consolas,monospace;
+    -webkit-font-smoothing:antialiased;overflow-x:hidden;
+  }
+  h1,h2,h3,h4{font-family:'Rajdhani','DM Mono',sans-serif;letter-spacing:.04em;font-weight:700}
+  header{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:24px;
+    padding:14px 26px;background:rgba(10,14,18,.82);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .logo{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:22px;letter-spacing:.22em;display:flex;align-items:center;gap:10px;cursor:pointer}
+  .logo .dot{width:10px;height:10px;background:var(--acc);border-radius:50%;box-shadow:0 0 14px var(--acc);animation:pulse 1.6s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+  nav{display:flex;gap:6px;margin-left:auto}
+  nav button{font-family:inherit;background:transparent;border:1px solid transparent;color:var(--muted);
+    padding:9px 16px;border-radius:6px;cursor:pointer;letter-spacing:.14em;font-size:12px;text-transform:uppercase;transition:.15s}
+  nav button:hover{color:var(--ink)}
+  nav button.active{color:var(--ink);border-color:var(--line);background:var(--panel)}
+  nav button.train{color:#0a0e12;background:var(--acc);border-color:var(--acc);font-weight:700}
+  nav button.train:hover{box-shadow:0 0 18px rgba(255,91,46,.5)}
+  main{max-width:1100px;margin:0 auto;padding:40px 26px 80px}
+  .view{display:none;animation:fade .35s ease}
+  .view.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+  .hero{padding:48px 0 30px;position:relative}
+  .eyebrow{color:var(--acc-2);letter-spacing:.34em;font-size:12px;text-transform:uppercase}
+  .hero h1{font-size:clamp(44px,9vw,92px);line-height:.92;margin:14px 0 18px}
+  .hero h1 span{color:var(--acc)}
+  .hero p{max-width:560px;color:var(--muted);font-size:15px;line-height:1.7}
+  .hero .cta{margin-top:28px;display:flex;gap:12px;flex-wrap:wrap}
+  .btn{font-family:inherit;cursor:pointer;border-radius:8px;padding:13px 24px;font-size:13px;letter-spacing:.1em;text-transform:uppercase;transition:.15s;border:1px solid var(--line)}
+  .btn.primary{background:var(--acc);color:#0a0e12;border-color:var(--acc);font-weight:700}
+  .btn.primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(255,91,46,.35)}
+  .btn.ghost{background:transparent;color:var(--ink)}
+  .btn.ghost:hover{border-color:var(--acc-2);color:var(--acc-2)}
+  .btn.sm{padding:9px 16px;font-size:11px}
+  .crosshair-bg{position:absolute;right:0;top:20px;width:280px;height:280px;opacity:.5;pointer-events:none}
+  .about{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:60px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:24px}
+  .card .num{color:var(--acc);font-family:'Rajdhani',sans-serif;font-size:13px;letter-spacing:.2em}
+  .card h3{margin:10px 0 8px;font-size:19px}
+  .card p{color:var(--muted);font-size:13px;line-height:1.65}
+  .about-wide{margin-top:22px;background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:30px}
+  .about-wide h2{font-size:24px;margin-bottom:12px}
+  .about-wide p{color:var(--muted);font-size:14px;line-height:1.8;max-width:760px}
+
+  .section-head{display:flex;align-items:baseline;gap:14px;margin-bottom:26px;flex-wrap:wrap}
+  .section-head h2{font-size:30px}
+  .section-head .sub{color:var(--muted);font-size:13px}
+  .games{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .game{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:26px 22px;cursor:pointer;transition:.18s;overflow:hidden}
+  .game:hover:not(.locked){transform:translateY(-4px);border-color:var(--acc)}
+  .game .tag{position:absolute;top:16px;right:16px;font-size:10px;letter-spacing:.15em;padding:4px 9px;border-radius:20px;text-transform:uppercase}
+  .tag.live{background:rgba(60,232,139,.12);color:var(--good);border:1px solid rgba(60,232,139,.3)}
+  .tag.soon{background:rgba(125,138,150,.1);color:var(--muted);border:1px solid var(--line)}
+  .game h3{font-size:22px;margin-bottom:8px}
+  .game .plat{color:var(--acc-2);font-size:12px;letter-spacing:.14em;text-transform:uppercase}
+  .game p{color:var(--muted);font-size:13px;margin-top:12px;line-height:1.6}
+  .game.locked{opacity:.5;cursor:not-allowed}
+
+  .panel-box{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:28px;margin-bottom:20px}
+  .panel-box h3{font-size:20px;margin-bottom:4px}
+  .panel-box .hint{color:var(--muted);font-size:12px;margin-bottom:22px}
+  .field{margin-bottom:18px}
+  .field label{display:block;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+  .field input,.field select{width:100%;background:var(--panel-2);border:1px solid var(--line);color:var(--ink);padding:12px 14px;border-radius:8px;font-family:inherit;font-size:14px}
+  .field input:focus,.field select:focus{outline:none;border-color:var(--acc-2)}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .sens-out{margin-top:18px;background:var(--panel-2);border:1px dashed var(--acc);border-radius:10px;padding:18px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+  .sens-out .lab{color:var(--muted);font-size:12px;letter-spacing:.1em;text-transform:uppercase}
+  .sens-out .val{font-family:'Rajdhani',sans-serif;font-size:34px;color:var(--acc);font-weight:700}
+  .sens-out small{color:var(--muted);font-size:12px}
+
+  /* hub */
+  .hub-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:20px}
+  .stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+  .stat-card{background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:18px}
+  .stat-card .k{color:var(--muted);font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+  .stat-card .v{font-family:'Rajdhani',sans-serif;font-size:32px;font-weight:700;color:var(--acc);margin-top:4px}
+  .stat-card .v.cy{color:var(--acc-2)}
+  .stat-card .v.gr{color:var(--good)}
+  .profile{display:flex;align-items:center;gap:16px;margin-bottom:8px}
+  .avatar{width:54px;height:54px;border-radius:12px;background:linear-gradient(135deg,var(--acc),var(--acc-2));display:flex;align-items:center;justify-content:center;font-family:'Rajdhani';font-weight:700;font-size:26px;color:#0a0e12}
+
+  .mode-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:8px}
+  .mode{background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:18px;cursor:pointer;transition:.15s}
+  .mode:hover{border-color:var(--acc);transform:translateY(-2px)}
+  .mode h4{font-size:18px;letter-spacing:.03em}
+  .mode span{color:var(--muted);font-size:12px;display:block;margin-top:6px;line-height:1.55}
+  .mode .go{color:var(--acc);font-size:11px;letter-spacing:.15em;margin-top:12px;display:block}
+
+  /* counter-strafe config layout */
+  .cs-layout{display:grid;grid-template-columns:1fr 300px;gap:20px;align-items:start}
+  .cs-config{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px;position:sticky;top:76px}
+  .cs-config h3{font-size:18px;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+  .cs-config h3::before{content:'';width:8px;height:8px;background:var(--acc);border-radius:50%}
+  .cfg{margin-bottom:16px}
+  .cfg label{display:flex;justify-content:space-between;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
+  .cfg label b{color:var(--acc-2);font-family:'Rajdhani'}
+  .cfg input[type=range]{width:100%;accent-color:var(--acc)}
+  .cfg select{width:100%;background:var(--panel-2);border:1px solid var(--line);color:var(--ink);padding:9px 12px;border-radius:7px;font-family:inherit;font-size:13px}
+  .toggle-row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-top:1px solid var(--line)}
+  .toggle-row span{font-size:12px;color:var(--ink);letter-spacing:.05em}
+  .switch{position:relative;width:42px;height:23px;flex:none}
+  .switch input{opacity:0;width:0;height:0}
+  .slider{position:absolute;inset:0;background:var(--panel-2);border:1px solid var(--line);border-radius:20px;cursor:pointer;transition:.2s}
+  .slider::before{content:'';position:absolute;height:15px;width:15px;left:3px;top:3px;background:var(--muted);border-radius:50%;transition:.2s}
+  .switch input:checked+.slider{background:rgba(255,91,46,.25);border-color:var(--acc)}
+  .switch input:checked+.slider::before{transform:translateX(19px);background:var(--acc)}
+
+  .arena-top{display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+  .arena-top .stat{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 16px;min-width:88px}
+  .arena-top .stat .k{color:var(--muted);font-size:10px;letter-spacing:.14em;text-transform:uppercase}
+  .arena-top .stat .v{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700}
+  .arena-top .stat .v.good{color:var(--good)} .arena-top .stat .v.acc{color:var(--acc)}
+  .arena-top .exit{margin-left:auto}
+  #arena{position:relative;width:100%;height:520px;background:
+      linear-gradient(var(--grid) 1px,transparent 1px) 0 0/40px 40px,
+      linear-gradient(90deg,var(--grid) 1px,transparent 1px) 0 0/40px 40px,
+      radial-gradient(900px 400px at 50% 40%,#0e1922,#080c10);
+    border:1px solid var(--line);border-radius:14px;overflow:hidden;cursor:crosshair;user-select:none}
+  .target{position:absolute;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ff8a63,var(--acc));
+    box-shadow:0 0 22px rgba(255,91,46,.55),inset 0 0 10px rgba(0,0,0,.35);transform:translate(-50%,-50%)}
+  .enemy{position:absolute;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ff6b8a,#c81f45);
+    box-shadow:0 0 18px rgba(200,31,69,.6);transform:translate(-50%,-50%)}
+  .bullet{position:absolute;width:7px;height:7px;border-radius:50%;background:#fff;box-shadow:0 0 8px #fff,0 0 14px var(--acc);transform:translate(-50%,-50%);pointer-events:none}
+  .ebullet{position:absolute;width:8px;height:8px;border-radius:50%;background:var(--bad);box-shadow:0 0 10px var(--bad);transform:translate(-50%,-50%);pointer-events:none}
+  .msg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;pointer-events:none}
+  .msg h2{font-size:40px;color:var(--ink)} .msg p{color:var(--muted);margin-top:10px;font-size:14px;max-width:420px}
+  .msg .big{font-size:70px;font-family:'Rajdhani',sans-serif;color:var(--acc);font-weight:700}
+  #reactionBox{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;transition:background .05s}
+  .player-ball{position:absolute;border-radius:50%;background:radial-gradient(circle at 35% 30%,#7fe9ff,var(--acc-2));box-shadow:0 0 20px rgba(0,217,255,.6);transform:translate(-50%,-50%)}
+  .cs-hint{position:absolute;top:14px;left:50%;transform:translateX(-50%);color:var(--muted);font-size:12px;letter-spacing:.08em;text-align:center;width:92%}
+  .cs-state{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);font-family:'Rajdhani';font-size:15px;letter-spacing:.1em;padding:6px 18px;border-radius:20px;border:1px solid var(--line);background:var(--panel)}
+  .cs-state.ready{color:var(--good);border-color:var(--good);box-shadow:0 0 14px rgba(60,232,139,.3)}
+  .cs-state.moving{color:var(--bad);border-color:var(--bad)}
+
+  /* login + onboarding overlay */
+  .overlay{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;padding:24px;
+    background:radial-gradient(900px 500px at 50% 0%,#101a23,#060a0e 70%)}
+  .overlay.active{display:flex}
+  .auth{width:100%;max-width:440px;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:38px 34px;animation:fade .4s ease}
+  .auth .brand{font-family:'Rajdhani';font-weight:700;font-size:26px;letter-spacing:.22em;display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:6px}
+  .auth .brand .dot{width:11px;height:11px;background:var(--acc);border-radius:50%;box-shadow:0 0 14px var(--acc)}
+  .auth .tag{text-align:center;color:var(--muted);font-size:12px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:28px}
+  .authtabs{display:flex;gap:6px;background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:4px;margin-bottom:22px}
+  .authtab{flex:1;background:transparent;border:none;color:var(--muted);font-family:inherit;font-size:13px;letter-spacing:.06em;padding:10px;border-radius:7px;cursor:pointer;transition:.15s}
+  .authtab.active{background:var(--acc);color:#0a0e12;font-weight:700}
+  .authpane{display:none} .authpane.active{display:block;animation:fade .25s ease}
+  .autherr{color:var(--bad);font-size:12px;min-height:16px;margin:2px 0 12px;letter-spacing:.02em}
+  .demo-code{background:var(--panel-2);border:1px dashed var(--acc-2);border-radius:9px;padding:12px;text-align:center;font-size:13px;color:var(--muted);margin-bottom:18px}
+  .demo-code b{color:var(--acc-2);font-family:'Rajdhani';font-size:20px;letter-spacing:.3em;margin-left:6px}
+  .gbtn{width:100%;display:flex;align-items:center;justify-content:center;gap:12px;background:#fff;color:#1f1f1f;
+    border:none;border-radius:10px;padding:14px;font-family:inherit;font-size:15px;font-weight:600;cursor:pointer;transition:.15s}
+  .gbtn:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(0,0,0,.4)}
+  .gsep{display:flex;align-items:center;gap:12px;color:var(--muted);font-size:11px;letter-spacing:.15em;margin:18px 0;text-transform:uppercase}
+  .gsep::before,.gsep::after{content:'';flex:1;height:1px;background:var(--line)}
+  .guest{width:100%;background:transparent;border:1px solid var(--line);color:var(--muted);border-radius:10px;padding:12px;font-family:inherit;font-size:13px;cursor:pointer;letter-spacing:.05em}
+  .guest:hover{color:var(--ink);border-color:var(--acc-2)}
+  .fineprint{text-align:center;color:var(--muted);font-size:10.5px;line-height:1.6;margin-top:20px}
+  /* wizard steps */
+  .wiz-step{display:none} .wiz-step.active{display:block;animation:fade .3s ease}
+  .wiz-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+  .wiz-head .who{display:flex;align-items:center;gap:10px;margin-left:auto}
+  .wiz-head .who img,.wiz-head .who .pic{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--acc),var(--acc-2));display:flex;align-items:center;justify-content:center;font-family:'Rajdhani';font-weight:700;color:#0a0e12;font-size:14px}
+  .wiz-head .who small{color:var(--muted);font-size:11px}
+  .auth h3{font-size:22px;margin:14px 0 4px} .auth .sh{color:var(--muted);font-size:12px;margin-bottom:20px}
+  .pick{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:8px}
+  .pick .opt{background:var(--panel-2);border:1px solid var(--line);border-radius:11px;padding:16px 14px;cursor:pointer;transition:.15s;position:relative}
+  .pick .opt:hover{border-color:var(--acc);transform:translateY(-2px)}
+  .pick .opt.sel{border-color:var(--acc);background:rgba(255,91,46,.08)}
+  .pick .opt.dis{opacity:.4;cursor:not-allowed}
+  .pick .opt h4{font-size:17px} .pick .opt small{color:var(--muted);font-size:11px;display:block;margin-top:3px}
+  .pick .opt.sel::after{content:'✓';position:absolute;top:10px;right:12px;color:var(--acc);font-weight:700}
+  .dots{display:flex;gap:6px;justify-content:center;margin-top:22px}
+  .dots i{width:7px;height:7px;border-radius:50%;background:var(--line);transition:.2s}
+  .dots i.on{background:var(--acc);width:20px;border-radius:4px}
+  .userchip{display:flex;align-items:center;gap:8px;background:var(--panel-2);border:1px solid var(--line);border-radius:20px;padding:5px 12px 5px 6px;margin-left:8px}
+  .userchip .pic{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--acc),var(--acc-2));display:flex;align-items:center;justify-content:center;font-family:'Rajdhani';font-weight:700;color:#0a0e12;font-size:12px}
+  .userchip small{color:var(--ink);font-size:12px}
+  .userchip button{background:none;border:none;color:var(--muted);cursor:pointer;font-size:11px;padding:0 0 0 4px}
+  .userchip button:hover{color:var(--bad)}
+
+  .footer{border-top:1px solid var(--line);padding:26px;text-align:center;color:var(--muted);font-size:12px;letter-spacing:.1em}
+  @media(max-width:820px){.about,.games,.mode-grid,.row,.hub-grid,.stat-grid,.cs-layout{grid-template-columns:1fr}
+    nav button:not(.train){display:none}.crosshair-bg{display:none}.cs-config{position:static}}
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- LOGIN / ONBOARDING OVERLAY -->
+<div class="overlay" id="overlay">
+  <div class="auth">
+
+    <!-- step 0: login / register -->
+    <div class="wiz-step active" id="wiz0">
+      <div class="brand"><span class="dot"></span>DEADZONE</div>
+      <div class="tag">Online Aim Trainer</div>
+
+      <div class="authtabs">
+        <button id="tabLogin" class="authtab active" onclick="authTab('login')">Prihlásiť sa</button>
+        <button id="tabReg" class="authtab" onclick="authTab('register')">Registrácia</button>
+      </div>
+
+      <!-- LOGIN -->
+      <div id="paneLogin" class="authpane active">
+        <div class="field"><label>Email alebo meno</label><input id="loginId" type="text" placeholder="napr. shadowaim" autocomplete="username"></div>
+        <div class="field"><label>Heslo</label><input id="loginPw" type="password" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></div>
+        <div class="autherr" id="loginErr"></div>
+        <button class="btn primary" style="width:100%" onclick="doLogin()">Prihlásiť sa ▸</button>
+      </div>
+
+      <!-- REGISTER -->
+      <div id="paneReg" class="authpane">
+        <div class="field"><label>Prezývka</label><input id="regName" type="text" placeholder="shadowaim" maxlength="14" autocomplete="username"></div>
+        <div class="field"><label>Email <small style="text-transform:none;letter-spacing:0">(pre overenie)</small></label><input id="regMail" type="email" placeholder="ty@email.com" autocomplete="email"></div>
+        <div class="row">
+          <div class="field"><label>Heslo</label><input id="regPw" type="password" placeholder="min. 4 znaky" autocomplete="new-password"></div>
+          <div class="field"><label>Heslo znova</label><input id="regPw2" type="password" placeholder="••••••••" autocomplete="new-password"></div>
+        </div>
+        <div class="autherr" id="regErr"></div>
+        <button class="btn primary" style="width:100%" onclick="doRegister()">Vytvoriť účet ▸</button>
+      </div>
+
+      <div class="gsep">alebo</div>
+      <button class="guest" onclick="guestSignIn()">Pokračovať ako hosť</button>
+      <p class="fineprint">Účet sa ukladá lokálne v tomto prehliadači. Heslo je zahashované.<br>Overenie e-mailom je v tejto ukážke iba simulované.</p>
+    </div>
+
+    <!-- step E: email verify (simulated) -->
+    <div class="wiz-step" id="wizE">
+      <div class="brand"><span class="dot"></span>DEADZONE</div>
+      <div class="tag">Overenie e-mailu</div>
+      <h3 style="text-align:center">Skontroluj svoj e-mail</h3>
+      <p class="sh" style="text-align:center">Poslali sme overovací kód na <b id="verMail" style="color:var(--acc-2)">—</b>.<br>(Ukážka: kód nájdeš nižšie.)</p>
+      <div class="demo-code">Demo kód: <b id="demoCode">000000</b></div>
+      <div class="field"><label>Zadaj 6-miestny kód</label><input id="verInput" type="text" inputmode="numeric" maxlength="6" placeholder="______" onkeydown="if(event.key==='Enter')verifyCode()"></div>
+      <div class="autherr" id="verErr"></div>
+      <button class="btn primary" style="width:100%" onclick="verifyCode()">Overiť a pokračovať ▸</button>
+    </div>
+
+    <!-- step 1: pick game -->
+    <div class="wiz-step" id="wiz1">
+      <div class="wiz-head"><div class="who"><span class="pic" id="obPic">R</span><small id="obMail">hráč</small></div></div>
+      <h3>Vyber obľúbenú hru</h3>
+      <p class="sh">Načíta sa jej prepočet citlivosti.</p>
+      <div class="pick">
+        <div class="opt sel" data-game="CS2" onclick="pickGame(this,'CS2')"><h4>CS2</h4><small>Source 2 · cm/360°</small></div>
+        <div class="opt dis"><h4>Valorant</h4><small>čoskoro</small></div>
+        <div class="opt dis"><h4>Fortnite</h4><small>čoskoro</small></div>
+        <div class="opt dis"><h4>Apex</h4><small>čoskoro</small></div>
+      </div>
+      <div class="dots"><i class="on"></i><i></i></div>
+      <button class="btn primary" style="width:100%;margin-top:18px" onclick="wizGo(2)">Pokračovať ▸</button>
+    </div>
+
+    <!-- step 2: sens settings -->
+    <div class="wiz-step" id="wiz2">
+      <div class="wiz-head"><div class="who"><span class="pic" id="obPic2">R</span><small id="obMail2">hráč</small></div></div>
+      <h3>Nastav citlivosť</h3>
+      <p class="sh">3D hry počítajú v stupňoch, nie v pixeloch — prepočítame na cm/360°.</p>
+      <div class="row">
+        <div class="field"><label>In-game sens</label><input id="obSens" type="number" step="0.01" value="1.20" oninput="obCalc()"></div>
+        <div class="field"><label>DPI</label><input id="obDpi" type="number" step="50" value="800" oninput="obCalc()"></div>
+      </div>
+      <div class="sens-out"><div><span class="lab">cm / 360°</span></div><div><span class="val" id="obCm">—</span></div></div>
+      <div class="dots"><i></i><i class="on"></i></div>
+      <button class="btn primary" style="width:100%;margin-top:18px" onclick="finishOnboarding()">Hotovo — spustiť ▸</button>
+    </div>
+
+  </div>
+</div>
+
+<header>
+  <div class="logo" onclick="go('home')"><span class="dot"></span>DEADZONE</div>
+  <nav>
+    <button id="nav-home" class="active" onclick="go('home')">Home</button>
+    <button id="nav-about" onclick="go('about')">O nás</button>
+    <button id="nav-hub" onclick="go('hub')">Hub</button>
+    <button id="nav-train" class="train" onclick="go('train')">Training ▸</button>
+    <div class="userchip" id="userchip" style="display:none"><span class="pic" id="chipPic">R</span><small id="chipName">hráč</small><button onclick="signOut()" title="Odhlásiť">⏻</button></div>
+  </nav>
+</header>
+
+<main>
+
+  <!-- HOME -->
+  <section id="home" class="view active">
+    <div class="hero">
+      <svg class="crosshair-bg" viewBox="0 0 100 100" fill="none">
+        <circle cx="50" cy="50" r="30" stroke="#ff5b2e" stroke-width="1" opacity=".6"/>
+        <circle cx="50" cy="50" r="44" stroke="#00d9ff" stroke-width=".5" opacity=".4"/>
+        <line x1="50" y1="5" x2="50" y2="30" stroke="#ff5b2e" stroke-width="1.5"/>
+        <line x1="50" y1="70" x2="50" y2="95" stroke="#ff5b2e" stroke-width="1.5"/>
+        <line x1="5" y1="50" x2="30" y2="50" stroke="#ff5b2e" stroke-width="1.5"/>
+        <line x1="70" y1="50" x2="95" y2="50" stroke="#ff5b2e" stroke-width="1.5"/>
+        <circle cx="50" cy="50" r="2" fill="#ff5b2e"/>
+      </svg>
+      <div class="eyebrow">Online Aim Trainer</div>
+      <h1>ZASIAHNI<br>PRV<span>Ý</span>.</h1>
+      <p>DEADZONE je tréningová platforma pre FPS hráčov. Nastav si profil, prepočítaj citlivosť z hry a sleduj svoje štatistiky v Hube. Teraz s plným counter-strafe módom.</p>
+      <div class="cta">
+        <button class="btn primary" onclick="go('setup')">Nastaviť profil</button>
+        <button class="btn ghost" onclick="go('train')">Rovno trénovať</button>
+      </div>
+    </div>
+    <div class="about">
+      <div class="card"><div class="num">/ 01</div><h3>Prepočet citlivosti</h3><p>3D hry počítajú v stupňoch na 360°, nie v pixeloch. Zadaj sens a DPI a dostaneš cm/360°.</p></div>
+      <div class="card"><div class="num">/ 02</div><h3>Reálne scenáre</h3><p>Counter-strafe s guličkami, Dust2 doors, reaction time. Tréning ktorý sa prenesie do hry.</p></div>
+      <div class="card"><div class="num">/ 03</div><h3>Hub so štatistikami</h3><p>Presnosť, čas reakcie, najlepšie skóre. Všetko na jednom mieste, ukladá sa lokálne.</p></div>
+    </div>
+    <div class="about-wide"><h2>O nás</h2><p>DEADZONE vznikol pre ľudí, ktorí to s FPS myslia vážne. Nie ďalší nudný terčovník — nástroj, ktorý napodobní situácie z reálnych zápasov. Začíname s CS2 a postupne pridáme Valorant, Fortnite a ďalšie. Každá hra má vlastný prepočet citlivosti, pretože každý engine meria pohyb inak.</p></div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about" class="view">
+    <div class="section-head"><h2>O nás</h2><span class="sub">// prečo DEADZONE</span></div>
+    <div class="about-wide" style="margin-top:0"><h2>Misia</h2><p>Zlepšiť sa v FPS neznamená hrať viac hodín, ale trénovať správne veci. DEADZONE rozkladá aim na časti, ktoré sa dajú merať: presnosť, reakcia, kontrola pohybu (counter-strafe) a peekovanie cez uhly. Všetko v prehliadači, zadarmo, bez inštalácie.</p></div>
+    <div class="about">
+      <div class="card"><div class="num">/ MYŠ</div><h3>Konzistencia</h3><p>Rovnaká citlivosť v tréneri ako v hre = svalová pamäť ktorá prenáša.</p></div>
+      <div class="card"><div class="num">/ MOZOG</div><h3>Reflex</h3><p>Reaction training skracuje čas medzi „vidím" a „strieľam".</p></div>
+      <div class="card"><div class="num">/ NOHY</div><h3>Pohyb</h3><p>Counter-strafe ťa naučí zastaviť presne a strieľať na 100 % presnosť.</p></div>
+    </div>
+  </section>
+
+  <!-- SETUP -->
+  <section id="setup" class="view">
+    <div class="section-head"><h2>Nastavenia profilu</h2><span class="sub">// ulož a pokračuj do Hubu</span></div>
+    <div class="panel-box">
+      <h3>Profil</h3><p class="hint">Tvoje meno a hra na tréning.</p>
+      <div class="row">
+        <div class="field"><label>Prezývka</label><input id="pName" type="text" value="ROOKIE" maxlength="14"></div>
+        <div class="field"><label>Hlavná hra</label>
+          <select id="pGame"><option>CS2</option><option disabled>Valorant (čoskoro)</option><option disabled>Fortnite (čoskoro)</option></select></div>
+      </div>
+    </div>
+    <div class="panel-box">
+      <h3>Prepočet citlivosti</h3>
+      <p class="hint">3D hry počítajú v stupňoch. Zadaj hodnoty a dostaneš cm/360° a eDPI.</p>
+      <div class="row">
+        <div class="field"><label>In-game sens (CS2)</label><input id="csSens" type="number" step="0.01" value="1.20" oninput="calcSens()"></div>
+        <div class="field"><label>DPI myši</label><input id="csDpi" type="number" step="50" value="800" oninput="calcSens()"></div>
+      </div>
+      <div class="sens-out"><div><span class="lab">cm / 360°</span></div><div><span class="val" id="cmOut">—</span> <small>cm na plnú otočku</small></div></div>
+      <div class="sens-out" style="border-style:solid;border-color:var(--line)"><div><span class="lab">eDPI</span></div><div><span class="val" id="edpiOut" style="color:var(--acc-2);font-size:26px">—</span></div></div>
+    </div>
+    <button class="btn primary" onclick="saveProfile()">Uložiť a prejsť do Hubu ▸</button>
+  </section>
+
+  <!-- HUB -->
+  <section id="hub" class="view">
+    <div class="section-head"><h2>Hub</h2><span class="sub">// tvoj profil a štatistiky</span></div>
+    <div class="hub-grid">
+      <div class="panel-box" style="margin:0">
+        <div class="profile">
+          <div class="avatar" id="hubAv">R</div>
+          <div><h3 id="hubName" style="margin:0">ROOKIE</h3><span class="hint" id="hubGame" style="margin:0">CS2 · 30.0 cm/360°</span></div>
+          <button class="btn ghost sm" style="margin-left:auto" onclick="go('setup')">Upraviť</button>
+        </div>
+        <div class="stat-grid" style="margin-top:18px">
+          <div class="stat-card"><div class="k">Najlepšia presnosť</div><div class="v gr" id="stAcc">—</div></div>
+          <div class="stat-card"><div class="k">Najlepší reakčný čas</div><div class="v cy" id="stRt">—</div></div>
+          <div class="stat-card"><div class="k">Best counter-strafe</div><div class="v" id="stCs">—</div></div>
+          <div class="stat-card"><div class="k">Celkom zásahov</div><div class="v cy" id="stHits">0</div></div>
+        </div>
+      </div>
+      <div class="panel-box" style="margin:0">
+        <h3>Rýchly štart</h3><p class="hint">Skoč rovno do tréningu.</p>
+        <button class="btn primary" style="width:100%;margin-bottom:10px" onclick="go('cs2')">CS2 Training ▸</button>
+        <button class="btn ghost" style="width:100%" onclick="resetStats()">Vynulovať štatistiky</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- TRAIN select -->
+  <section id="train" class="view">
+    <div class="section-head"><h2>Vyber hru</h2><span class="sub">// každá hra má vlastný prepočet sens</span></div>
+    <div class="games">
+      <div class="game" onclick="go('cs2')"><span class="tag live">Live</span><div class="plat">Valve · Source 2</div><h3>CS2</h3><p>Counter-strafe s guličkami, Dust2 doors, reaction time a aim trainer.</p></div>
+      <div class="game locked"><span class="tag soon">Čoskoro</span><div class="plat">Epic · Unreal</div><h3>Fortnite</h3><p>Edit + aim scenáre, prepočet cez ADS a build sens.</p></div>
+      <div class="game locked"><span class="tag soon">Čoskoro</span><div class="plat">Riot</div><h3>Valorant</h3><p>Ekvivalentná citlivosť k CS2, one-tap tréning.</p></div>
+    </div>
+  </section>
+
+  <!-- CS2 hub -->
+  <section id="cs2" class="view">
+    <div class="section-head"><h2>CS2 <span style="color:var(--acc)">·</span> Training</h2><span class="sub">// vyber mód</span></div>
+    <div class="panel-box">
+      <h3>Vyber mód</h3><p class="hint">4 tréningové scenáre. Counter-strafe má vlastné nastavenia vpravo pri aréne.</p>
+      <div class="mode-grid">
+        <div class="mode" onclick="startMode('flick')"><h4>Aim Trainer</h4><span>Klasické klikanie na terče. Meria presnosť a skóre.</span><span class="go">SPUSTIŤ ▸</span></div>
+        <div class="mode" onclick="startMode('reaction')"><h4>Reaction Time</h4><span>Počkaj na zelenú a klikni čo najrýchlejšie. 5 pokusov.</span><span class="go">SPUSTIŤ ▸</span></div>
+        <div class="mode" onclick="startMode('strafe')"><h4>Counter-Strafe</h4><span>Si gulička čo strieľa guličky — ale výstrel ide len po counter-strafe. Plne nastaviteľné.</span><span class="go">SPUSTIŤ ▸</span></div>
+        <div class="mode" onclick="startMode('doors')"><h4>Dust2 Doors Peek</h4><span>Terč blikne v medzere po otvorení dverí. Zasiahni ho včas.</span><span class="go">SPUSTIŤ ▸</span></div>
+      </div>
+    </div>
+
+    <div id="arenaWrap" style="display:none">
+      <div class="cs-layout" id="csLayout">
+        <div>
+          <div class="arena-top">
+            <div class="stat"><div class="k" id="s1k">Skóre</div><div class="v acc" id="s1">0</div></div>
+            <div class="stat"><div class="k" id="s2k">Presnosť</div><div class="v good" id="s2">—</div></div>
+            <div class="stat"><div class="k" id="s3k">Stav</div><div class="v" id="s3">—</div></div>
+            <button class="btn ghost exit sm" onclick="stopMode()">✕ Ukončiť</button>
+          </div>
+          <div id="arena"></div>
+        </div>
+
+        <!-- counter-strafe settings, only shown for strafe -->
+        <div class="cs-config" id="csConfig" style="display:none">
+          <h3>Counter-Strafe</h3>
+          <div class="cfg"><label>Veľkosť terča <b id="vBall">34 px</b></label><input id="cBall" type="range" min="14" max="70" value="34" oninput="cfgLabel()"></div>
+          <div class="cfg"><label>Okno po counter-strafe <b id="vWin">400 ms</b></label><input id="cWin" type="range" min="120" max="900" step="20" value="400" oninput="cfgLabel()"></div>
+          <div class="cfg"><label>Rýchlosť pohybu terča <b id="vSpd">0 (statický)</b></label><input id="cSpd" type="range" min="0" max="6" step="0.5" value="0" oninput="cfgLabel()"></div>
+          <div class="toggle-row"><span>Terče strieľajú späť</span><label class="switch"><input id="cShoot" type="checkbox"><span class="slider"></span></label></div>
+          <div class="toggle-row"><span>Terč sa pohybuje</span><label class="switch"><input id="cMove" type="checkbox"><span class="slider"></span></label></div>
+          <div class="toggle-row" style="border-bottom:1px solid var(--line)"><span>Len counter-strafe (bez terčov)</span><label class="switch"><input id="cOnly" type="checkbox"><span class="slider"></span></label></div>
+          <button class="btn primary sm" style="width:100%;margin-top:16px" onclick="startMode('strafe')">Reštart s nastaveniami</button>
+          <p class="hint" style="margin:12px 0 0;font-size:11px">A / D = pohyb. Stlač opačnú klávesu (counter-strafe), aby si sa zastavil. Iba vtedy môžeš strieľať — klik ĽM.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<div class="footer">DEADZONE // online aim trainer — CS2 live, ďalšie hry čoskoro</div>
+
+<script>
+/* ---------- state (localStorage may be blocked in some sandboxes -> fallback to memory) ---------- */
+let MEM={};
+const store={
+  get(k){try{const v=localStorage.getItem(k);return v!==null?v:(MEM[k]??null);}catch(e){return MEM[k]??null;}},
+  set(k,v){try{localStorage.setItem(k,v);}catch(e){}MEM[k]=v;}
+};
+let profile={name:'ROOKIE',game:'CS2',cm:30,edpi:960,sens:1.2,dpi:800,email:null,google:false,onboarded:false};
+let stats={bestAcc:null,bestRt:null,bestCs:null,totalHits:0};
+function loadState(){
+  const p=store.get('dz_profile'); if(p)try{profile=JSON.parse(p)}catch(e){}
+  const s=store.get('dz_stats'); if(s)try{stats=JSON.parse(s)}catch(e){}
+  renderHub();
+  if(document.getElementById('csSens')){/* prefill */}
+}
+function saveState(){store.set('dz_profile',JSON.stringify(profile));store.set('dz_stats',JSON.stringify(stats));if(typeof persistProfileToUser==='function')persistProfileToUser();}
+
+/* ---------- navigation ---------- */
+function go(id){
+  stopMode();
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+  if(id==='home')nav('nav-home');
+  if(id==='about')nav('nav-about');
+  if(id==='hub'||id==='setup')nav('nav-hub');
+  if(id==='train'||id==='cs2')nav('nav-train');
+  if(id==='hub')renderHub();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function nav(x){const e=document.getElementById(x);if(e)e.classList.add('active');}
+
+/* ---------- sens math ---------- */
+function calcSens(){
+  const sens=parseFloat(document.getElementById('csSens').value)||0;
+  const dpi=parseFloat(document.getElementById('csDpi').value)||0;
+  if(sens<=0||dpi<=0){document.getElementById('cmOut').textContent='—';document.getElementById('edpiOut').textContent='—';return;}
+  const cm=(360/(sens*0.022)/dpi)*2.54;
+  document.getElementById('cmOut').textContent=cm.toFixed(1);
+  document.getElementById('edpiOut').textContent=Math.round(sens*dpi);
+  SENS_FACTOR=Math.min(2.2,Math.max(0.35,30/cm));
+  return {cm, edpi:Math.round(sens*dpi)};
+}
+let SENS_FACTOR=1;
+
+function saveProfile(){
+  const r=calcSens()||{cm:30,edpi:960};
+  profile.name=(document.getElementById('pName').value||'ROOKIE').toUpperCase();
+  profile.game=document.getElementById('pGame').value||'CS2';
+  profile.cm=r.cm; profile.edpi=r.edpi;
+  profile.sens=parseFloat(document.getElementById('csSens').value)||profile.sens;
+  profile.dpi=parseFloat(document.getElementById('csDpi').value)||profile.dpi;
+  profile.onboarded=true;
+  saveState();updateUserChip();renderHub(); go('hub');
+}
+function renderHub(){
+  document.getElementById('hubName').textContent=profile.name;
+  document.getElementById('hubAv').textContent=profile.name.charAt(0)||'R';
+  document.getElementById('hubGame').textContent=`${profile.game} · ${Number(profile.cm).toFixed(1)} cm/360°`;
+  document.getElementById('stAcc').textContent=stats.bestAcc!=null?stats.bestAcc+'%':'—';
+  document.getElementById('stRt').textContent=stats.bestRt!=null?stats.bestRt+'ms':'—';
+  document.getElementById('stCs').textContent=stats.bestCs!=null?stats.bestCs:'—';
+  document.getElementById('stHits').textContent=stats.totalHits||0;
+}
+function resetStats(){stats={bestAcc:null,bestRt:null,bestCs:null,totalHits:0};saveState();renderHub();}
+function recordAcc(a){if(stats.bestAcc==null||a>stats.bestAcc){stats.bestAcc=a;saveState();}}
+function recordRt(t){if(stats.bestRt==null||t<stats.bestRt){stats.bestRt=t;saveState();}}
+function recordCs(s){if(stats.bestCs==null||s>stats.bestCs){stats.bestCs=s;saveState();}}
+function addHits(n){stats.totalHits=(stats.totalHits||0)+n;saveState();}
+
+/* ---------- arena engine ---------- */
+const arena=()=>document.getElementById('arena');
+let raf=null, timers=[], mode=null;
+function clearArena(){if(!arena())return;arena().innerHTML='';timers.forEach(clearInterval);timers.forEach(clearTimeout);timers=[];if(raf)cancelAnimationFrame(raf);raf=null;arena().onmousedown=null;document.onkeydown=null;document.onkeyup=null;}
+function stopMode(){const w=document.getElementById('arenaWrap');if(w)w.style.display='none';const c=document.getElementById('csConfig');if(c)c.style.display='none';const l=document.getElementById('csLayout');if(l)l.style.gridTemplateColumns='1fr';clearArena();mode=null;}
+function setStats(k1,v1,k2,v2,k3,v3){
+  document.getElementById('s1k').textContent=k1;document.getElementById('s1').textContent=v1;
+  document.getElementById('s2k').textContent=k2;document.getElementById('s2').textContent=v2;
+  document.getElementById('s3k').textContent=k3;document.getElementById('s3').textContent=v3;
+}
+function startMode(m){
+  mode=m;clearArena();
+  document.getElementById('arenaWrap').style.display='block';
+  const cfg=document.getElementById('csConfig');const lay=document.getElementById('csLayout');
+  if(m==='strafe'){cfg.style.display='block';lay.style.gridTemplateColumns='1fr 300px';}
+  else{cfg.style.display='none';lay.style.gridTemplateColumns='1fr';}
+  document.getElementById('arenaWrap').scrollIntoView({behavior:'smooth'});
+  if(m==='flick')modeFlick();
+  if(m==='reaction')modeReaction();
+  if(m==='strafe')modeStrafe();
+  if(m==='doors')modeDoors();
+}
+function cfgLabel(){
+  document.getElementById('vBall').textContent=document.getElementById('cBall').value+' px';
+  document.getElementById('vWin').textContent=document.getElementById('cWin').value+' ms';
+  const sp=parseFloat(document.getElementById('cSpd').value);
+  document.getElementById('vSpd').textContent=sp===0?'0 (statický)':sp.toFixed(1);
+}
+
+/* --- Aim Trainer --- */
+function modeFlick(){
+  let hits=0,shots=0,start=Date.now();
+  setStats('Zásahy','0','Presnosť','—','Čas','30s');
+  const A=arena();
+  function spawn(){A.innerHTML='';const size=34+Math.random()*24;const t=document.createElement('div');t.className='target';
+    t.style.width=t.style.height=size+'px';t.style.left=(6+Math.random()*88)+'%';t.style.top=(10+Math.random()*80)+'%';
+    t.onmousedown=e=>{e.stopPropagation();hits++;shots++;update();spawn();};A.appendChild(t);}
+  A.onmousedown=()=>{shots++;update();};
+  function update(){const acc=shots?Math.round(hits/shots*100):0;
+    setStats('Zásahy',hits,'Presnosť',acc+'%','Čas',Math.max(0,30-Math.floor((Date.now()-start)/1000))+'s');}
+  spawn();
+  const iv=setInterval(()=>{const left=30-Math.floor((Date.now()-start)/1000);update();
+    if(left<=0){clearInterval(iv);const acc=shots?Math.round(hits/shots*100):0;recordAcc(acc);addHits(hits);
+      A.innerHTML=`<div class="msg"><div class="big">${hits}</div><h2>zásahov</h2><p>Presnosť ${acc}% · uložené do Hubu</p></div>`;A.onmousedown=null;}},200);
+  timers.push(iv);
+}
+
+/* --- Reaction --- */
+function modeReaction(){
+  const A=arena();let round=0,times=[],state='wait',t0=0,to=null;
+  setStats('Kolo','0/5','Priemer','—','Posledný','—');
+  function screen(bg,txt,sub){A.innerHTML=`<div id="reactionBox" style="background:${bg}"><h2 style="font-size:32px">${txt}</h2>${sub?`<p>${sub}</p>`:''}</div>`;}
+  function next(){state='wait';screen('#7a1020','Čakaj na ZELENÚ…','neklikaj priskoro');
+    to=setTimeout(()=>{state='go';t0=performance.now();screen('#0d7a3a','KLIKNI!','');},900+Math.random()*2500);timers.push(to);}
+  A.onmousedown=()=>{
+    if(state==='wait'){clearTimeout(to);screen('#7a1020','Priskoro!','klikni pre ďalší pokus');state='early';return;}
+    if(state==='early'){next();return;}
+    if(state==='go'){const dt=Math.round(performance.now()-t0);times.push(dt);round++;
+      const avg=Math.round(times.reduce((a,b)=>a+b,0)/times.length);
+      setStats('Kolo',round+'/5','Priemer',avg+'ms','Posledný',dt+'ms');
+      if(round>=5){recordRt(Math.min(...times));A.innerHTML=`<div class="msg"><div class="big">${avg}ms</div><h2>priemer</h2><p>Najlepší: ${Math.min(...times)}ms · uložené</p></div>`;A.onmousedown=null;return;}
+      screen('#111820',dt+' ms','klikni pre ďalšie kolo');state='early';}};
+  next();
+}
+
+/* --- Counter-Strafe (you = ball that shoots balls, only after counter-strafe) --- */
+function modeStrafe(){
+  const A=arena();
+  const cfg={
+    ball:parseInt(document.getElementById('cBall').value),
+    win:parseInt(document.getElementById('cWin').value),
+    tSpeed:parseFloat(document.getElementById('cSpd').value),
+    shootBack:document.getElementById('cShoot').checked,
+    moving:document.getElementById('cMove').checked,
+    csOnly:document.getElementById('cOnly').checked
+  };
+  let score=0,shots=0,hits=0,csReps=0;
+  const W=A.clientWidth,H=A.clientHeight;
+  A.innerHTML=`<div class="cs-hint">A / D = pohyb. Stlač OPAČNÚ klávesu = counter-strafe (zastavíš). Strieľať ĽM môžeš len keď stojíš.</div>
+    <div class="player-ball" id="pl" style="width:26px;height:26px"></div>
+    <div class="cs-state moving" id="csState">V POHYBE</div>`;
+  setStats(cfg.csOnly?'Counter-strafe':'Skóre','0','Presnosť',cfg.csOnly?'—':'—','Stav','—');
+  document.getElementById('s2k').textContent=cfg.csOnly?'C-strafe':'Presnosť';
+
+  const pl=document.getElementById('pl');const stateEl=document.getElementById('csState');
+  let x=W*0.5, y=H*0.72, vx=0;
+  let keys={};
+  let stopped=false;         // currently standing still (velocity ~0)
+  let csWindow=0;            // ms remaining in "can shoot" window after a counter-strafe
+  let wasMoving=false;
+  let bullets=[], ebullets=[], enemies=[];
+  let lastT=performance.now();
+
+  document.onkeydown=e=>{const k=e.key.toLowerCase();if(k==='a'||k==='d')keys[k]=true;};
+  document.onkeyup=e=>{const k=e.key.toLowerCase();if(k==='a'||k==='d')keys[k]=false;};
+
+  function spawnEnemy(){
+    if(cfg.csOnly)return;
+    const ex=(0.12+Math.random()*0.76)*W, ey=(0.12+Math.random()*0.4)*H;
+    const el=document.createElement('div');el.className='enemy';
+    el.style.width=el.style.height=cfg.ball+'px';el.style.left=ex+'px';el.style.top=ey+'px';
+    A.appendChild(el);
+    const dir=Math.random()<.5?-1:1;
+    enemies.push({el,x:ex,y:ey,vx:(cfg.moving?cfg.tSpeed*dir:0),r:cfg.ball/2,cd:800+Math.random()*1200});
+  }
+  // seed enemies
+  if(!cfg.csOnly){spawnEnemy();spawnEnemy();}
+
+  function loop(now){
+    const dt=Math.min(50,now-lastT);lastT=now;
+    const speed=3.6*SENS_FACTOR;
+    // movement + counter-strafe detection
+    let pressingBrake=false;
+    if(keys['d']){ if(vx<0){vx=0;pressingBrake=true;} else vx=speed; }
+    else if(keys['a']){ if(vx>0){vx=0;pressingBrake=true;} else vx=-speed; }
+    else { vx*=0.6; if(Math.abs(vx)<0.15)vx=0; } // no key: glide (like no counter-strafe = slow stop)
+    x+=vx*(dt/16);
+    x=Math.max(14,Math.min(W-14,x));
+    pl.style.left=x+'px';pl.style.top=y+'px';
+
+    const nowStopped=Math.abs(vx)<0.15;
+    // detect the counter-strafe MOMENT: was moving, now stopped via opposite key
+    if(wasMoving && nowStopped && pressingBrake){ csWindow=cfg.win; csReps++;
+      if(cfg.csOnly){score++;document.getElementById('s1').textContent=score;flash(x,y,'var(--good)');} }
+    wasMoving=!nowStopped;
+
+    if(csWindow>0)csWindow-=dt;
+    const canShoot=nowStopped && csWindow>0;
+    stateEl.textContent=canShoot?'PRIPRAVENÝ — STREĽ':(nowStopped?'STOJÍŠ (spravil si c-strafe?)':'V POHYBE');
+    stateEl.className='cs-state '+(canShoot?'ready':(nowStopped?'':'moving'));
+    document.getElementById('s3').textContent=canShoot?Math.max(0,Math.round(csWindow))+'ms':(nowStopped?'stop':'move');
+    if(cfg.csOnly)document.getElementById('s2').textContent=csReps;
+
+    // bullets (player)
+    bullets.forEach(b=>{b.x+=b.vx*(dt/16);b.y+=b.vy*(dt/16);b.el.style.top=b.y+'px';b.el.style.left=b.x+'px';});
+    // collide player bullets with enemies
+    bullets=bullets.filter(b=>{
+      if(b.y<-10||b.y>H+10||b.x<-10||b.x>W+10){b.el.remove();return false;}
+      for(let i=0;i<enemies.length;i++){const en=enemies[i];
+        if(Math.hypot(b.x-en.x,b.y-en.y)<en.r+4){en.el.remove();enemies.splice(i,1);b.el.remove();
+          hits++;score++;flash(en.x,en.y,'var(--acc)');spawnEnemy();return false;}}
+      return true;
+    });
+    // enemies move + shoot back
+    enemies.forEach(en=>{
+      if(en.vx){en.x+=en.vx*(dt/16);if(en.x<en.r||en.x>W-en.r)en.vx*=-1;en.el.style.left=en.x+'px';}
+      if(cfg.shootBack){en.cd-=dt;if(en.cd<=0){en.cd=1000+Math.random()*1400;
+        const ang=Math.atan2(y-en.y,x-en.x);const eb=document.createElement('div');eb.className='ebullet';
+        eb.style.left=en.x+'px';eb.style.top=en.y+'px';A.appendChild(eb);
+        ebullets.push({el:eb,x:en.x,y:en.y,vx:Math.cos(ang)*3.4,vy:Math.sin(ang)*3.4});}}
+    });
+    // enemy bullets
+    ebullets=ebullets.filter(b=>{b.x+=b.vx*(dt/16);b.y+=b.vy*(dt/16);b.el.style.left=b.x+'px';b.el.style.top=b.y+'px';
+      if(Math.hypot(b.x-x,b.y-y)<17){b.el.remove();score=Math.max(0,score-1);document.getElementById('s1').textContent=score;flash(x,y,'var(--bad)');return false;}
+      if(b.x<-10||b.x>W+10||b.y<-10||b.y>H+10){b.el.remove();return false;}return true;});
+
+    if(!cfg.csOnly){const acc=shots?Math.round(hits/shots*100):0;document.getElementById('s1').textContent=score;document.getElementById('s2').textContent=acc+'%';}
+    raf=requestAnimationFrame(loop);
+  }
+  function flash(fx,fy,col){const f=document.createElement('div');f.style.cssText=`position:absolute;left:${fx}px;top:${fy}px;width:24px;height:24px;border-radius:50%;background:${col};transform:translate(-50%,-50%);opacity:.9;transition:.25s`;A.appendChild(f);requestAnimationFrame(()=>{f.style.transform='translate(-50%,-50%) scale(2.4)';f.style.opacity='0';});setTimeout(()=>f.remove(),260);}
+
+  A.onmousedown=e=>{
+    if(cfg.csOnly)return;
+    const nowStopped=Math.abs(vx)<0.15;
+    if(!(nowStopped && csWindow>0)){ // blocked: no counter-strafe done
+      stateEl.textContent='NAJPRV COUNTER-STRAFE!';stateEl.className='cs-state moving';return;}
+    // fire a bullet upward from player
+    shots++;
+    const b=document.createElement('div');b.className='bullet';b.style.left=x+'px';b.style.top=y+'px';A.appendChild(b);
+    // aim toward mouse
+    const rect=A.getBoundingClientRect();const mx=e.clientX-rect.left,my=e.clientY-rect.top;
+    const ang=Math.atan2(my-y,mx-x);
+    bullets.push({el:b,x:x,y:y,vx:Math.cos(ang)*9,vy:Math.sin(ang)*9});
+    csWindow=0; // one shot per counter-strafe
+  };
+  // rewrite bullet loop to use vx/vy properly
+  loop.__=true;
+  // stop after 45s
+  const end=setTimeout(()=>{cancelAnimationFrame(raf);
+    if(cfg.csOnly){recordCs(csReps);A.innerHTML=`<div class="msg"><div class="big">${csReps}</div><h2>counter-strafov</h2><p>Uložené do Hubu · Reštart vpravo</p></div>`;}
+    else{const acc=shots?Math.round(hits/shots*100):0;recordAcc(acc);recordCs(csReps);addHits(hits);
+      A.innerHTML=`<div class="msg"><div class="big">${score}</div><h2>skóre</h2><p>${hits} zásahov · ${acc}% presnosť · ${csReps} c-strafov · uložené</p></div>`;}
+    A.onmousedown=null;document.onkeydown=null;document.onkeyup=null;},45000);
+  timers.push(end);
+  lastT=performance.now();raf=requestAnimationFrame(loop);
+}
+
+/* --- Dust2 Doors --- */
+function modeDoors(){
+  const A=arena();let hits=0,shots=0,shown=0,alive=true;
+  A.innerHTML=`<div class="cs-hint">Terč blikne v medzere „dverí". Klikni ho skôr než zmizne (~800ms).</div>`;
+  setStats('Zásahy','0','Presnosť','—','Terče','0');
+  function drawDoors(gap){const dw=90,dh=140;
+    return `<div style="position:absolute;left:${gap-dw}px;top:50%;width:${dw}px;height:${dh}px;transform:translateY(-50%);background:linear-gradient(#3a2a1c,#241a10);border:2px solid #5a4126;border-radius:4px;box-shadow:2px 0 8px #000"></div>
+            <div style="position:absolute;left:${gap+22}px;top:50%;width:${dw}px;height:${dh}px;transform:translateY(-50%);background:linear-gradient(#3a2a1c,#241a10);border:2px solid #5a4126;border-radius:4px;box-shadow:-2px 0 8px #000"></div>`;}
+  function round(){if(!alive)return;const W=A.clientWidth,H=A.clientHeight;
+    const gap=W*0.3+Math.random()*W*0.4,gy=H*0.3+Math.random()*H*0.3;
+    A.innerHTML=`<div class="cs-hint">Sleduj medzeru medzi dverami…</div>`+drawDoors(gap);
+    const t1=setTimeout(()=>{if(!alive)return;shown++;document.getElementById('s3').textContent=shown;
+      const t=document.createElement('div');t.className='target';t.style.cssText=`width:30px;height:30px;left:${gap+11}px;top:${gy}px;position:absolute;transform:translate(-50%,-50%)`;
+      let hit=false;t.onmousedown=e=>{e.stopPropagation();hit=true;hits++;shots++;upd();clearTimeout(t2);round();};
+      A.appendChild(t);const t2=setTimeout(()=>{if(!hit){shots++;upd();round();}},820);timers.push(t2);
+    },600+Math.random()*1400);timers.push(t1);}
+  A.onmousedown=()=>{shots++;upd();};
+  function upd(){const acc=shots?Math.round(hits/shots*100):0;document.getElementById('s1').textContent=hits;document.getElementById('s2').textContent=acc+'%';}
+  round();
+  const cap=setInterval(()=>{if(shown>=15){alive=false;clearInterval(cap);const acc=shots?Math.round(hits/shots*100):0;recordAcc(acc);addHits(hits);
+    A.innerHTML=`<div class="msg"><div class="big">${hits}/${shown}</div><h2>zásahov</h2><p>Presnosť ${acc}% · uložené</p></div>`;A.onmousedown=null;}},300);
+  timers.push(cap);
+}
+
+/* ---------- auth + onboarding ---------- */
+let onboardGame='CS2';
+let pendingUser=null;   // user awaiting email verification
+function showOverlay(step){document.getElementById('overlay').classList.add('active');wizGo(step);}
+function hideOverlay(){document.getElementById('overlay').classList.remove('active');}
+function wizGo(n){document.querySelectorAll('.wiz-step').forEach(s=>s.classList.remove('active'));
+  const el=document.getElementById('wiz'+n);if(el)el.classList.add('active');if(n===2)obCalc();}
+function authTab(which){
+  document.getElementById('tabLogin').classList.toggle('active',which==='login');
+  document.getElementById('tabReg').classList.toggle('active',which==='register');
+  document.getElementById('paneLogin').classList.toggle('active',which==='login');
+  document.getElementById('paneReg').classList.toggle('active',which==='register');
+  document.getElementById('loginErr').textContent='';document.getElementById('regErr').textContent='';
+}
+
+/* simple hash (demo only — not cryptographically secure) */
+function hashPw(s){let h=5381;for(let i=0;i<s.length;i++)h=((h<<5)+h+s.charCodeAt(i))>>>0;return 'h'+h.toString(16);}
+function loadUsers(){try{return JSON.parse(store.get('dz_users')||'{}')}catch(e){return {}}}
+function saveUsers(u){store.set('dz_users',JSON.stringify(u));}
+
+function doRegister(){
+  const name=(document.getElementById('regName').value||'').trim();
+  const mail=(document.getElementById('regMail').value||'').trim().toLowerCase();
+  const pw=document.getElementById('regPw').value||'';
+  const pw2=document.getElementById('regPw2').value||'';
+  const err=document.getElementById('regErr');err.textContent='';
+  if(name.length<2){err.textContent='Zadaj prezývku (min. 2 znaky).';return;}
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(mail)){err.textContent='Zadaj platný e-mail.';return;}
+  if(pw.length<4){err.textContent='Heslo musí mať aspoň 4 znaky.';return;}
+  if(pw!==pw2){err.textContent='Heslá sa nezhodujú.';return;}
+  const users=loadUsers();
+  const key=name.toLowerCase();
+  if(users[key]){err.textContent='Toto meno už existuje. Prihlás sa.';return;}
+  if(Object.values(users).some(u=>u.email===mail)){err.textContent='Tento e-mail je už použitý.';return;}
+  // create UNVERIFIED user, send "email"
+  pendingUser={key,name,email:mail,pw:hashPw(pw),verified:false};
+  const code=(''+Math.floor(100000+Math.random()*900000));
+  pendingUser.code=code;
+  document.getElementById('verMail').textContent=mail;
+  document.getElementById('demoCode').textContent=code;
+  document.getElementById('verInput').value='';document.getElementById('verErr').textContent='';
+  wizGo('E');
+}
+function verifyCode(){
+  const err=document.getElementById('verErr');err.textContent='';
+  const val=(document.getElementById('verInput').value||'').trim();
+  if(val!==pendingUser.code){err.textContent='Nesprávny kód. Skús znova.';return;}
+  const users=loadUsers();
+  users[pendingUser.key]={name:pendingUser.name,email:pendingUser.email,pw:pendingUser.pw,verified:true,
+    profile:null,stats:{bestAcc:null,bestRt:null,bestCs:null,totalHits:0}};
+  saveUsers(users);
+  // log in the new user and go to onboarding (game + sens)
+  beginSession(pendingUser.key,true);
+}
+function doLogin(){
+  const id=(document.getElementById('loginId').value||'').trim().toLowerCase();
+  const pw=document.getElementById('loginPw').value||'';
+  const err=document.getElementById('loginErr');err.textContent='';
+  const users=loadUsers();
+  let key=null;
+  if(users[id])key=id;
+  else{key=Object.keys(users).find(k=>users[k].email===id);}
+  if(!key){err.textContent='Účet neexistuje. Zaregistruj sa.';return;}
+  if(users[key].pw!==hashPw(pw)){err.textContent='Nesprávne heslo.';return;}
+  if(!users[key].verified){err.textContent='Účet nie je overený.';return;}
+  beginSession(key,false);
+}
+function guestSignIn(){
+  profile={name:'HOSŤ',game:'CS2',cm:30,edpi:960,sens:1.2,dpi:800,email:null,google:false,onboarded:false,guest:true,userKey:null};
+  document.getElementById('obPic').textContent='H';document.getElementById('obPic2').textContent='H';
+  document.getElementById('obMail').textContent='hosť';document.getElementById('obMail2').textContent='hosť';
+  wizGo(1);
+}
+/* begin a logged-in session; if user has no saved profile -> onboarding, else straight to hub */
+function beginSession(key,isNew){
+  const users=loadUsers();const u=users[key];
+  store.set('dz_session',key);
+  if(u.profile){ // returning, already set up
+    profile=u.profile;profile.userKey=key;stats=u.stats||stats;
+    saveState();syncProfileToForms();updateUserChip();renderHub();hideOverlay();go('hub');
+  } else {       // fresh account -> onboarding
+    profile={name:u.name.toUpperCase(),game:'CS2',cm:30,edpi:960,sens:1.2,dpi:800,email:u.email,google:false,onboarded:false,userKey:key};
+    stats=u.stats||{bestAcc:null,bestRt:null,bestCs:null,totalHits:0};
+    document.getElementById('obPic').textContent=profile.name.charAt(0);
+    document.getElementById('obPic2').textContent=profile.name.charAt(0);
+    document.getElementById('obMail').textContent=u.email;
+    document.getElementById('obMail2').textContent=u.email;
+    wizGo(1);
+  }
+}
+function pickGame(el,g){document.querySelectorAll('#wiz1 .opt').forEach(o=>o.classList.remove('sel'));el.classList.add('sel');onboardGame=g;}
+function obCalc(){
+  const s=parseFloat(document.getElementById('obSens').value)||0;
+  const d=parseFloat(document.getElementById('obDpi').value)||0;
+  if(s<=0||d<=0){document.getElementById('obCm').textContent='—';return;}
+  const cm=(360/(s*0.022)/d)*2.54;
+  document.getElementById('obCm').textContent=cm.toFixed(1)+' cm';
+  profile._tmpCm=cm;profile._tmpEdpi=Math.round(s*d);profile._tmpSens=s;profile._tmpDpi=d;
+}
+function finishOnboarding(){
+  obCalc();
+  profile.game=onboardGame;
+  profile.cm=profile._tmpCm||30;profile.edpi=profile._tmpEdpi||960;
+  profile.sens=profile._tmpSens||1.2;profile.dpi=profile._tmpDpi||800;
+  profile.onboarded=true;
+  persistProfileToUser();
+  saveState();
+  syncProfileToForms();updateUserChip();hideOverlay();renderHub();go('hub');
+}
+/* save current profile+stats back into the user account record */
+function persistProfileToUser(){
+  if(!profile.userKey)return;
+  const users=loadUsers();if(!users[profile.userKey])return;
+  const clean=Object.assign({},profile);delete clean._tmpCm;delete clean._tmpEdpi;delete clean._tmpSens;delete clean._tmpDpi;
+  users[profile.userKey].profile=clean;users[profile.userKey].stats=stats;saveUsers(users);
+}
+function signOut(){
+  store.set('dz_session','');try{localStorage.removeItem('dz_session')}catch(e){}MEM['dz_session']='';
+  profile={name:'ROOKIE',game:'CS2',cm:30,edpi:960,sens:1.2,dpi:800,email:null,google:false,onboarded:false};
+  updateUserChip();authTab('login');showOverlay(0);
+}
+function updateUserChip(){
+  const chip=document.getElementById('userchip');
+  if(profile.onboarded||profile.guest){chip.style.display='flex';
+    document.getElementById('chipPic').textContent=(profile.name||'R').charAt(0);
+    document.getElementById('chipName').textContent=profile.guest?'Hosť':(profile.email||profile.name);
+  } else chip.style.display='none';
+}
+function syncProfileToForms(){
+  const s=document.getElementById('csSens'),d=document.getElementById('csDpi'),n=document.getElementById('pName');
+  if(s&&profile.sens)s.value=profile.sens;
+  if(d&&profile.dpi)d.value=profile.dpi;
+  if(n)n.value=profile.name;
+  if(document.getElementById('csSens'))calcSens();
+}
+
+/* ---------- boot ---------- */
+loadState();
+const sess=store.get('dz_session');
+if(sess){const users=loadUsers();const u=users[sess];
+  if(u&&u.profile){profile=u.profile;profile.userKey=sess;stats=u.stats||stats;}
+}
+syncProfileToForms();
+updateUserChip();
+if(!(profile.onboarded && store.get('dz_session'))){ authTab('login');showOverlay(0); }
+
+
+</script>
+</body>
+</html>
