@@ -62,22 +62,19 @@
   .hero-stage h1 span{-webkit-text-stroke:1.5px var(--acc)}
   .hero-figure{position:relative;z-index:2;width:min(58%,300px);margin-top:-70px;pointer-events:none}
   .hero-figure-img{width:100%;display:block;filter:drop-shadow(0 22px 30px rgba(0,0,0,.6))}
-  .hero-bottombar{position:relative;z-index:3;display:flex;align-items:flex-end;justify-content:space-between;
+  .hero-tagline{position:relative;z-index:3;max-width:440px;margin:14px auto 0;color:rgba(255,255,255,.68);
+    font-size:13px;line-height:1.6}
+  .hero-bottombar{position:relative;z-index:3;display:flex;align-items:center;justify-content:space-between;
     gap:20px;padding:18px 28px 22px;flex-wrap:wrap}
-  .hero-bottombar p{max-width:420px;color:rgba(255,255,255,.7);font-size:13px;line-height:1.6;margin:0}
   .hero-stats{display:flex;gap:26px}
   .hs b{display:block;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:22px;color:#fff}
   .hs span{display:block;color:rgba(255,255,255,.55);font-size:11px;letter-spacing:.02em}
   .hero .btn.ghost{border-color:rgba(255,255,255,.3);background:rgba(255,255,255,.06);backdrop-filter:blur(6px);color:#fff}
   .hero .btn.ghost:hover{border-color:rgba(255,255,255,.55);background:rgba(255,255,255,.12)}
-  .hero-chips{position:relative;z-index:2;display:grid;grid-template-columns:repeat(3,1fr);
-    background:rgba(255,255,255,.06);border-top:1px solid rgba(255,255,255,.12)}
-  .hero-chip{background:rgba(8,6,5,.6);backdrop-filter:blur(10px);padding:16px 20px;cursor:pointer;
-    transition:.15s;border-left:1px solid rgba(255,255,255,.1)}
-  .hero-chip:first-child{border-left:none}
-  .hero-chip:hover{background:rgba(232,98,58,.2)}
-  .hc-k{display:block;color:rgba(255,255,255,.55);font-size:10.5px;text-transform:uppercase;letter-spacing:.06em}
-  .hc-v{display:block;color:#fff;font-family:'Space Grotesk';font-weight:600;font-size:14.5px;margin-top:3px}
+  .hero-quick{display:flex;gap:10px}
+  .hq{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);
+    color:#fff;font-size:15px;cursor:pointer;transition:.15s;display:flex;align-items:center;justify-content:center}
+  .hq:hover{background:var(--acc);border-color:var(--acc);color:#0a0a0b}
   .btn{font-family:inherit;cursor:pointer;border-radius:8px;padding:12px 22px;font-size:13.5px;font-weight:500;letter-spacing:0;transition:.15s;border:1px solid var(--line)}
   .btn.primary{background:var(--acc);color:#0a0a0b;border-color:var(--acc);font-weight:600}
   .btn.primary:hover{background:#f27553;transform:translateY(-1px)}
@@ -305,11 +302,8 @@
   .footer{border-top:1px solid var(--line);padding:26px;text-align:center;color:var(--muted);font-size:12px}
   @media(max-width:820px){.about,.games,.mode-grid,.row,.hub-grid,.stat-grid,.cs-layout,.hub-lower{grid-template-columns:1fr}
     .mini-stats{grid-template-columns:repeat(2,1fr)}
-    .hero-chips{grid-template-columns:1fr}
-    .hero-chip{border-left:none;border-top:1px solid rgba(255,255,255,.1)}
-    .hero-chip:first-child{border-top:none}
     .hero-topbar{padding:16px 20px 0}
-    .hero-bottombar{padding:14px 20px 18px;flex-direction:column;align-items:flex-start}
+    .hero-bottombar{padding:14px 20px 18px}
     .hero-figure{width:78%;margin-top:-40px}
     nav button:not(.train){display:none}.cs-config{position:static}}
   .sf-layout{display:grid;grid-template-columns:1fr 300px;gap:20px;align-items:start}
@@ -438,18 +432,18 @@
         <div class="hero-figure">
           <img src="assets/hero-operator.png" alt="CS2 operátor" class="hero-figure-img">
         </div>
+        <p class="hero-tagline">DEADZONE je tréningová platforma pre FPS hráčov. Nastav si profil, prepočítaj citlivosť z hry a sleduj svoje štatistiky v Hube.</p>
       </div>
       <div class="hero-bottombar">
-        <p>DEADZONE je tréningová platforma pre FPS hráčov. Nastav si profil, prepočítaj citlivosť z hry a sleduj svoje štatistiky v Hube.</p>
         <div class="hero-stats">
           <div class="hs"><b>4</b><span>tréningové módy</span></div>
           <div class="hs"><b>CS2</b><span>live teraz</span></div>
         </div>
-      </div>
-      <div class="hero-chips">
-        <div class="hero-chip" tabindex="0" role="button" onclick="go('sensfinder')"><span class="hc-k">Nástroj</span><span class="hc-v">Sens Finder</span></div>
-        <div class="hero-chip" tabindex="0" role="button" onclick="go('cs2')"><span class="hc-k">Live</span><span class="hc-v">CS2 Aim Trainer</span></div>
-        <div class="hero-chip" tabindex="0" role="button" onclick="go('cs2')"><span class="hc-k">Mód</span><span class="hc-v">Counter-Strafe</span></div>
+        <div class="hero-quick">
+          <button class="hq" onclick="go('sensfinder')" aria-label="Sens Finder" title="Sens Finder">◎</button>
+          <button class="hq" onclick="go('cs2')" aria-label="CS2 Aim Trainer" title="CS2 Aim Trainer">▸</button>
+          <button class="hq" onclick="go('cs2')" aria-label="Counter-Strafe" title="Counter-Strafe">⇄</button>
+        </div>
       </div>
     </div>
     <div class="about">
