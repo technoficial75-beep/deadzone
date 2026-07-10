@@ -264,6 +264,8 @@
   .apexart{background:linear-gradient(160deg,#a8353f,#1a1a1a)}
   .val-logo,.fort-logo,.apex-logo{font-family:'Space Grotesk';font-weight:600;color:#fff;letter-spacing:.02em;font-size:17px;text-shadow:0 2px 6px rgba(0,0,0,.5)}
 
+  [role="button"]{outline-offset:2px}
+  [role="button"]:focus-visible{outline:2px solid var(--acc-2)}
   .footer{border-top:1px solid var(--line);padding:26px;text-align:center;color:var(--muted);font-size:12px}
   @media(max-width:820px){.about,.games,.mode-grid,.row,.hub-grid,.stat-grid,.cs-layout,.hub-lower{grid-template-columns:1fr}
     .mini-stats{grid-template-columns:repeat(2,1fr)}
@@ -341,7 +343,7 @@
       <h3>Vyber obľúbenú hru</h3>
       <p class="sh">Načíta sa jej prepočet citlivosti.</p>
       <div class="pick">
-        <div class="opt sel" data-game="CS2" onclick="pickGame(this,'CS2')"><h4>CS2</h4><small>Source 2 · cm/360°</small></div>
+        <div class="opt sel" data-game="CS2" tabindex="0" role="button" onclick="pickGame(this,'CS2')"><h4>CS2</h4><small>Source 2 · cm/360°</small></div>
         <div class="opt dis"><h4>Valorant</h4><small>čoskoro</small></div>
         <div class="opt dis"><h4>Fortnite</h4><small>čoskoro</small></div>
         <div class="opt dis"><h4>Apex</h4><small>čoskoro</small></div>
@@ -368,7 +370,7 @@
 </div>
 
 <header>
-  <div class="logo" onclick="go('home')"><span class="dot"></span>DEADZONE</div>
+  <div class="logo" tabindex="0" role="button" onclick="go('home')"><span class="dot"></span>DEADZONE</div>
   <nav>
     <button id="nav-hub" class="train" onclick="go('hub')">⌂ Hub</button>
     <div class="userchip" id="userchip" style="display:none"><span class="pic" id="chipPic">R</span><small id="chipName">hráč</small><button onclick="signOut()" title="Odhlásiť">⏻</button></div>
@@ -466,7 +468,7 @@
     <div class="library">
 
       <!-- Sens Finder -->
-      <div class="cover live" onclick="go('sensfinder')">
+      <div class="cover live" tabindex="0" role="button" onclick="go('sensfinder')">
         <div class="cover-art sfart">
           <div class="cover-fav" style="color:var(--acc-2)">◎</div>
           <div class="cover-logo"><span class="sf-logo">SENS</span><span class="sf-logo2">FINDER</span></div>
@@ -476,7 +478,7 @@
       </div>
 
       <!-- CS2 -->
-      <div class="cover live" onclick="go('cs2')">
+      <div class="cover live" tabindex="0" role="button" onclick="go('cs2')">
         <div class="cover-art cs2art">
           <div class="cover-fav">★</div>
           <div class="cover-logo"><span class="cs-counter">COUNTER</span><span class="cs-strike">STRIKE <span class="cs-2">2</span></span></div>
@@ -561,10 +563,10 @@
     <div class="panel-box" id="modePicker">
       <h3>Vyber mód</h3><p class="hint">4 tréningové scenáre. Klikni na kartu.</p>
       <div class="mode-grid">
-        <div class="mode" onclick="startMode('flick')"><h4>Aim Trainer</h4><span>Klasické klikanie na terče. Meria presnosť a skóre.</span><span class="go">SPUSTIŤ ▸</span></div>
-        <div class="mode" onclick="startMode('reaction')"><h4>Reaction Time</h4><span>Počkaj na zelenú a klikni čo najrýchlejšie. 5 pokusov.</span><span class="go">SPUSTIŤ ▸</span></div>
-        <div class="mode" id="modeStrafeCard" onclick="startMode('strafe')"><h4>Counter-Strafe</h4><span>Si gulička čo strieľa guličky — výstrel ide len po counter-strafe. Nastavenia meníš naživo priamo v hre.</span><span class="go">SPUSTIŤ ▸</span></div>
-        <div class="mode" onclick="startMode('doors')"><h4>Dust2 Doors Peek</h4><span>Terč blikne v medzere po otvorení dverí. Zasiahni ho včas.</span><span class="go">SPUSTIŤ ▸</span></div>
+        <div class="mode" tabindex="0" role="button" onclick="startMode('flick')"><h4>Aim Trainer</h4><span>Klasické klikanie na terče. Meria presnosť a skóre.</span><span class="go">SPUSTIŤ ▸</span></div>
+        <div class="mode" tabindex="0" role="button" onclick="startMode('reaction')"><h4>Reaction Time</h4><span>Počkaj na zelenú a klikni čo najrýchlejšie. 5 pokusov.</span><span class="go">SPUSTIŤ ▸</span></div>
+        <div class="mode" id="modeStrafeCard" tabindex="0" role="button" onclick="startMode('strafe')"><h4>Counter-Strafe</h4><span>Si gulička čo strieľa guličky — výstrel ide len po counter-strafe. Nastavenia meníš naživo priamo v hre.</span><span class="go">SPUSTIŤ ▸</span></div>
+        <div class="mode" tabindex="0" role="button" onclick="startMode('doors')"><h4>Dust2 Doors Peek</h4><span>Terč blikne v medzere po otvorení dverí. Zasiahni ho včas.</span><span class="go">SPUSTIŤ ▸</span></div>
       </div>
     </div>
 
@@ -681,6 +683,11 @@ function loadState(){
   if(document.getElementById('csSens')){/* prefill */}
 }
 function saveState(){store.set('dz_profile',JSON.stringify(profile));store.set('dz_stats',JSON.stringify(stats));if(typeof persistProfileToUser==='function')persistProfileToUser();}
+
+/* ---------- keyboard activation for div[role=button] ---------- */
+document.addEventListener('keydown',e=>{
+  if((e.key==='Enter'||e.key===' ')&&e.target.matches('[role="button"]')){e.preventDefault();e.target.click();}
+});
 
 /* ---------- navigation ---------- */
 function go(id){
