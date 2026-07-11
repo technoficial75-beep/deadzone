@@ -362,7 +362,7 @@
   .library-sm{gap:12px}
   .library-sm .cover{width:108px}
   .library-sm .soon-badge{font-size:9px;padding:4px 8px}
-  .library-sm .fort-logo{font-size:10.5px}
+  .library-sm .soon-logo{font-size:10.5px}
   .library-sm .cover-logo{top:8px;left:8px}
   .library-sm .cover-foot{padding:6px 7px;gap:5px}
   .library-sm .cover-foot .hrs{font-size:9px}
@@ -380,7 +380,7 @@
     background:rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:3px 8px 3px 6px;
     font-family:'Space Grotesk';font-weight:600;font-size:9px;letter-spacing:.05em;color:#fff}
   .cover-live-badge .live-dot{width:5px;height:5px}
-  .cover-logo{position:absolute;top:10px;left:10px;z-index:2;display:flex;flex-direction:column;line-height:.98}
+  .cover-logo{position:absolute;top:10px;left:10px;right:10px;z-index:2;display:flex;flex-direction:column;line-height:.98}
   .cover-tag{position:absolute;bottom:8px;right:8px;z-index:3;background:rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.15);
     border-radius:20px;padding:3px 9px;font-family:'Space Grotesk';font-weight:600;font-size:9px;letter-spacing:.05em;color:#fff}
   .soon-badge{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
@@ -416,8 +416,10 @@
   .sf-reticle::before,.sf-reticle::after{content:'';position:absolute;background:var(--acc)}
   .sf-reticle::before{left:50%;top:-9px;width:2px;height:78px;transform:translateX(-50%);opacity:.4}
   .sf-reticle::after{top:50%;left:-9px;height:2px;width:78px;transform:translateY(-50%);opacity:.4}
-  .fortart{background:linear-gradient(160deg,#4a5fbf,#221e33)}
-  .fort-logo{font-family:'Space Grotesk';font-weight:600;color:#fff;letter-spacing:.01em;font-size:12.5px;text-shadow:0 2px 6px rgba(0,0,0,.5)}
+  /* generic "coming soon" cover — tinted per-game via --sa-1/--sa-2 */
+  .soonart{background:linear-gradient(160deg,var(--sa-1,#4a5fbf),var(--sa-2,#221e33))}
+  .soon-logo{font-family:'Space Grotesk';font-weight:600;color:#fff;letter-spacing:.01em;font-size:12.5px;
+    text-shadow:0 2px 6px rgba(0,0,0,.5);display:block;line-height:1.15}
 
   [role="button"]{outline-offset:2px}
   [role="button"]:focus-visible{outline:2px solid var(--acc-2)}
@@ -790,12 +792,138 @@
 
       <!-- Fortnite (locked) -->
       <div class="cover locked" data-status="soon">
-        <div class="cover-art fortart">
-          <div class="cover-logo"><span class="fort-logo">FORTNITE</span></div>
+        <div class="cover-art soonart" style="--sa-1:#4a5fbf;--sa-2:#221e33">
+          <div class="cover-logo"><span class="soon-logo">FORTNITE</span></div>
           <div class="soon-badge">ČOSKORO</div>
         </div>
         <div class="cover-foot"><span class="hrs">—</span>
           <button class="notify-btn" data-game="fortnite" onclick="toggleNotify(event,this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 8a6 6 0 0 1 12 0c0 5.4 1.6 7.2 2 8H4c.4-.8 2-2.6 2-8"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg>
+            Upozorniť ma
+          </button>
+        </div>
+      </div>
+
+      <!-- Overwatch 2 (locked) -->
+      <div class="cover locked" data-status="soon">
+        <div class="cover-art soonart" style="--sa-1:#ff8a3d;--sa-2:#1a1006">
+          <div class="cover-logo"><span class="soon-logo">OVERWATCH 2</span></div>
+          <div class="soon-badge">ČOSKORO</div>
+        </div>
+        <div class="cover-foot"><span class="hrs">—</span>
+          <button class="notify-btn" data-game="overwatch2" onclick="toggleNotify(event,this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 8a6 6 0 0 1 12 0c0 5.4 1.6 7.2 2 8H4c.4-.8 2-2.6 2-8"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg>
+            Upozorniť ma
+          </button>
+        </div>
+      </div>
+
+      <!-- Call of Duty: Warzone (locked) -->
+      <div class="cover locked" data-status="soon">
+        <div class="cover-art soonart" style="--sa-1:#5a6b3f;--sa-2:#14140f">
+          <div class="cover-logo"><span class="soon-logo">WARZONE</span></div>
+          <div class="soon-badge">ČOSKORO</div>
+        </div>
+        <div class="cover-foot"><span class="hrs">—</span>
+          <button class="notify-btn" data-game="warzone" onclick="toggleNotify(event,this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 8a6 6 0 0 1 12 0c0 5.4 1.6 7.2 2 8H4c.4-.8 2-2.6 2-8"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg>
+            Upozorniť ma
+          </button>
+        </div>
+      </div>
+
+      <!-- Rainbow Six Siege (locked) -->
+      <div class="cover locked" data-status="soon">
+        <div class="cover-art soonart" style="--sa-1:#2b3a4a;--sa-2:#0a0c10">
+          <div class="cover-logo"><span class="soon-logo">R6 SIEGE</span></div>
+          <div class="soon-badge">ČOSKORO</div>
+        </div>
+        <div class="cover-foot"><span class="hrs">—</span>
+          <button class="notify-btn" data-game="r6siege" onclick="toggleNotify(event,this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 8a6 6 0 0 1 12 0c0 5.4 1.6 7.2 2 8H4c.4-.8 2-2.6 2-8"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg>
+            Upozorniť ma
+          </button>
+        </div>
+      </div>
+
+      <!-- PUBG (locked) -->
+      <div class="cover locked" data-status="soon">
+        <div class="cover-art soonart" style="--sa-1:#c9932f;--sa-2:#2b1f0a">
+          <div class="cover-logo"><span class="soon-logo">PUBG</span></div>
+          <div class="soon-badge">ČOSKORO</div>
+        </div>
+        <div class="cover-foot"><span class="hrs">—</span>
+          <button class="notify-btn" data-game="pubg" onclick="toggleNotify(event,this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 8a6 6 0 0 1 12 0c0 5.4 1.6 7.2 2 8H4c.4-.8 2-2.6 2-8"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg>
+            Upozorniť ma
+          </button>
+        </div>
+      </div>
+
+      <!-- Escape from Tarkov (locked) -->
+      <div class="cover locked" data-status="soon">
+        <div class="cover-art soonart" style="--sa-1:#5c5a3f;--sa-2:#14140f">
+          <div class="cover-logo"><span class="soon-logo">TARKOV</span></div>
+          <div class="soon-badge">ČOSKORO</div>
+        </div>
+        <div class="cover-foot"><span class="hrs">—</span>
+          <button class="notify-btn" data-game="tarkov" onclick="toggleNotify(event,this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 8a6 6 0 0 1 12 0c0 5.4 1.6 7.2 2 8H4c.4-.8 2-2.6 2-8"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg>
+            Upozorniť ma
+          </button>
+        </div>
+      </div>
+
+      <!-- Destiny 2 (locked) -->
+      <div class="cover locked" data-status="soon">
+        <div class="cover-art soonart" style="--sa-1:#6a4fc9;--sa-2:#1a1030">
+          <div class="cover-logo"><span class="soon-logo">DESTINY 2</span></div>
+          <div class="soon-badge">ČOSKORO</div>
+        </div>
+        <div class="cover-foot"><span class="hrs">—</span>
+          <button class="notify-btn" data-game="destiny2" onclick="toggleNotify(event,this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 8a6 6 0 0 1 12 0c0 5.4 1.6 7.2 2 8H4c.4-.8 2-2.6 2-8"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg>
+            Upozorniť ma
+          </button>
+        </div>
+      </div>
+
+      <!-- Halo Infinite (locked) -->
+      <div class="cover locked" data-status="soon">
+        <div class="cover-art soonart" style="--sa-1:#3fae6a;--sa-2:#0a1a1c">
+          <div class="cover-logo"><span class="soon-logo">HALO INFINITE</span></div>
+          <div class="soon-badge">ČOSKORO</div>
+        </div>
+        <div class="cover-foot"><span class="hrs">—</span>
+          <button class="notify-btn" data-game="halo" onclick="toggleNotify(event,this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 8a6 6 0 0 1 12 0c0 5.4 1.6 7.2 2 8H4c.4-.8 2-2.6 2-8"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg>
+            Upozorniť ma
+          </button>
+        </div>
+      </div>
+
+      <!-- The Finals (locked) -->
+      <div class="cover locked" data-status="soon">
+        <div class="cover-art soonart" style="--sa-1:#ff4fd8;--sa-2:#0a1a2a">
+          <div class="cover-logo"><span class="soon-logo">THE FINALS</span></div>
+          <div class="soon-badge">ČOSKORO</div>
+        </div>
+        <div class="cover-foot"><span class="hrs">—</span>
+          <button class="notify-btn" data-game="thefinals" onclick="toggleNotify(event,this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 8a6 6 0 0 1 12 0c0 5.4 1.6 7.2 2 8H4c.4-.8 2-2.6 2-8"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg>
+            Upozorniť ma
+          </button>
+        </div>
+      </div>
+
+      <!-- Marvel Rivals (locked) -->
+      <div class="cover locked" data-status="soon">
+        <div class="cover-art soonart" style="--sa-1:#c9333f;--sa-2:#14203a">
+          <div class="cover-logo"><span class="soon-logo">MARVEL RIVALS</span></div>
+          <div class="soon-badge">ČOSKORO</div>
+        </div>
+        <div class="cover-foot"><span class="hrs">—</span>
+          <button class="notify-btn" data-game="marvelrivals" onclick="toggleNotify(event,this)">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 8a6 6 0 0 1 12 0c0 5.4 1.6 7.2 2 8H4c.4-.8 2-2.6 2-8"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg>
             Upozorniť ma
           </button>
