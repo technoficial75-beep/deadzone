@@ -937,13 +937,17 @@
 
     <div class="panel-box" id="sfIntro">
       <h3>Ako to funguje</h3>
-      <p class="hint" style="margin-bottom:18px">Klikneš do arény a <b>myš sa uzamkne</b> (Pointer Lock) — odvtedy tvoj reálny pohyb myšou otáča pohľad presne cez <b>sens × 0.022°/count</b> (yaw CS2), rovnako ako v hre. Flickneš na terč a klikneš. Ak <b style="color:var(--bad)">prestreľuješ (overflick)</b>, sens je privysoká a nástroj ju zníži; ak <b style="color:var(--acc-2)">nedoletíš (underflick)</b>, zvýši ju. Keďže sens naozaj mení pohyb pohľadu, číslo sa zbieha k tvojmu optimu. Na konci dostaneš odporúčané cm/360°. Ak prehliadač Pointer Lock nepovolí, prepne sa na približný kurzorový režim.</p>
+      <p class="hint" style="margin-bottom:18px">Klikneš do arény a <b>myš sa uzamkne</b> (Pointer Lock) — odvtedy tvoj reálny pohyb myšou otáča pohľad presne cez <b>sens × yaw tvojej hry</b>, rovnako ako v hre. Flickneš na terč a klikneš. Ak <b style="color:var(--bad)">prestreľuješ (overflick)</b>, sens je privysoká a nástroj ju zníži; ak <b style="color:var(--acc-2)">nedoletíš (underflick)</b>, zvýši ju. Keďže sens naozaj mení pohyb pohľadu, číslo sa zbieha k tvojmu optimu. Na konci dostaneš odporúčané cm/360°. Ak prehliadač Pointer Lock nepovolí, prepne sa na približný kurzorový režim.</p>
       <div class="row">
-        <div class="field"><label>Štartovacia sens (CS2)</label><input id="sfStartSens" type="number" step="0.01" value="1.20"></div>
+        <div class="field"><label>Hra</label>
+          <select id="sfGame"><option value="0.022" selected>CS2 / CS:GO</option><option value="0.0692">Valorant</option><option value="0.022">Apex / Source</option><option value="0.0066">Overwatch 2</option></select></div>
+        <div class="field"><label>Počet flickov</label>
+          <select id="sfRounds"><option value="30">30 (rýchle)</option><option value="50" selected>50 (odporúčané)</option><option value="80">80 (presné)</option></select></div>
+      </div>
+      <div class="row">
+        <div class="field"><label>Štartovacia sens</label><input id="sfStartSens" type="number" step="0.01" value="1.20"></div>
         <div class="field"><label>DPI</label><input id="sfStartDpi" type="number" step="50" value="800"></div>
       </div>
-      <div class="field"><label>Počet flickov</label>
-        <select id="sfRounds"><option value="30">30 (rýchle)</option><option value="50" selected>50 (odporúčané)</option><option value="80">80 (presné)</option></select></div>
       <button class="btn primary" onclick="startSensFinder()">▸ Spustiť Sens Finder</button>
     </div>
 
@@ -1423,19 +1427,25 @@ function modeDoors(){
    exactly like an FPS. Targets sit at a world yaw; you flick to bring them onto the
    fixed centre crosshair. If sens is too high the same hand-flick overshoots (the
    ballistic peak passes the target); too low and it undershoots. We nudge sens toward
-   the value where flicks land, then report cm/360 = 360/(sens*YAW)/dpi*2.54.
+   the value where flicks land, then report cm/360 = 360/(sens*yaw)/dpi*2.54, using the
+   yaw (deg/count at sens 1.0) of whichever game the player picks — CS2/Source/Apex 0.022,
+   Valorant 0.0692, Overwatch 2 0.0066 — same values as the Find-my-sens converter.
    The arena width maps to SF_FOV degrees of view, so px<->degrees is consistent.
    If Pointer Lock is unavailable we fall back to an approximate cursor-path mode. */
-const SF_YAW=0.022, SF_FOV=40;
+const SF_FOV=40;
 let sf=null, sfTimers=[];
 function clearSfTimers(){sfTimers.forEach(clearTimeout);sfTimers=[];}
-function sfCmFromSens(sens){return (360/(sens*SF_YAW)/sf.dpi)*2.54;}
+function sfCmFromSens(sens){return (360/(sens*sf.yaw)/sf.dpi)*2.54;}
 function startSensFinder(){
+  const gameSel=document.getElementById('sfGame');
+  const yaw=parseFloat(gameSel.value)||0.022;
+  const gameName=gameSel.options[gameSel.selectedIndex].textContent;
   const startSens=parseFloat(document.getElementById('sfStartSens').value)||1.2;
   const dpi=parseFloat(document.getElementById('sfStartDpi').value)||800;
   const total=parseInt(document.getElementById('sfRounds').value)||50;
   const A=document.getElementById('sfArena');
   sf={sens:startSens,dpi,total,round:0,over:0,under:0,perfect:0,errors:[],recent:[],done:null,
+      yaw,gameName,
       locked:false,cursorMode:!(A&&A.requestPointerLock),lockTried:false,
       view:0,view0:0,dir:1,dist:0,angR:1,progress:0,pxPerDeg:8,tgtSize:0,tgtTop:0,path:[]};
   document.getElementById('sfIntro').style.display='none';
@@ -1480,7 +1490,7 @@ function sfLockChange(){
 /* raw counts rotate the virtual view; track the peak progress toward the target */
 function sfLockedMove(e){
   if(!sf||!sf.locked)return;
-  sf.view+=e.movementX*sf.sens*SF_YAW;
+  sf.view+=e.movementX*sf.sens*sf.yaw;
   const prog=(sf.view-sf.view0)*sf.dir;
   if(prog>sf.progress)sf.progress=prog;
   sfRender();
@@ -1592,7 +1602,7 @@ function finishSensFinder(){
   const finalCm=sfCmFromSens(sf.sens),finalSens=sf.sens,finalDpi=sf.dpi;
   sf.done={sens:finalSens,dpi:finalDpi,cm:finalCm};
   A.innerHTML=`<div class="msg"><div class="big">${finalCm.toFixed(1)}</div><h2>cm / 360° (odporúčané)</h2>
-    <p>Sens ${finalSens.toFixed(3)} · DPI ${finalDpi} · ${sf.perfect} presných z ${sf.total}</p>
+    <p>${sf.gameName} · sens ${finalSens.toFixed(3)} · DPI ${finalDpi} · ${sf.perfect} presných z ${sf.total}</p>
     <button class="btn primary sm" style="pointer-events:auto;margin-top:16px" onclick="applySensFinderResult()">Použiť túto sens v tréneri ▸</button></div>`;
 }
 function applySensFinderResult(){
