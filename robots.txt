@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://technoficial75-beep.github.io/deadzone/sitemap.xml
