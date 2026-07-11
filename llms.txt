@@ -29,4 +29,4 @@ prepočítanou citlivosťou zodpovedajúcou ich nastaveniu v hre.
 
 ## Odkazy
 
-- Domovská stránka: /index.html
+- Domovská stránka: https://technoficial75-beep.github.io/deadzone/
