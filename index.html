@@ -20,14 +20,22 @@
     font-family:'Inter',ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif;
     -webkit-font-smoothing:antialiased;overflow-x:hidden;
   }
+  .grid-lift{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0;transition:opacity .3s ease}
+  .grid-lift.active{opacity:1}
+  .grid-lift .tile{position:absolute;top:0;left:0;width:64px;height:64px;border-radius:5px;
+    background:transparent;box-shadow:none;
+    transition:transform .3s cubic-bezier(.2,.8,.2,1),box-shadow .3s ease,background-color .3s ease}
+  @media (prefers-reduced-motion: reduce){.grid-lift{display:none}}
+  @media (hover:none){.grid-lift{display:none}}
   h1,h2,h3,h4{font-family:'Space Grotesk','Inter',sans-serif;letter-spacing:-.01em;font-weight:600}
   header{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:24px;
     padding:14px 28px;background:transparent;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
   .logo{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:19px;letter-spacing:.02em;display:flex;align-items:center;gap:9px;cursor:pointer}
   .logo .dot{width:8px;height:8px;background:var(--acc);border-radius:2px}
-  .nav-pills{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;gap:2px;
+  .nav-pills,.auth-pills{display:flex;gap:2px;
     background:rgba(255,255,255,.55);border:1px solid var(--line);border-radius:999px;padding:4px;
     backdrop-filter:blur(8px);box-shadow:0 2px 10px rgba(0,0,0,.04)}
+  .nav-pills{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%)}
   .pill{font-family:inherit;background:transparent;border:none;color:var(--muted);padding:8px 18px;
     border-radius:999px;cursor:pointer;font-size:13px;letter-spacing:.02em;transition:.2s;white-space:nowrap}
   .pill:hover{color:var(--ink)}
@@ -41,7 +49,7 @@
 
   .hero{position:relative;display:flex;flex-direction:column;
     width:100vw;margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw);margin-top:-101px;
-    min-height:max(440px,calc(100vh - 320px));border-radius:0;overflow:hidden}
+    min-height:clamp(420px,calc(100vh - 320px),600px);border-radius:0;overflow:hidden}
   .hero-bg{position:absolute;inset:0;z-index:0;overflow:hidden;background:
     radial-gradient(1100px 700px at 50% 90%, rgba(214,67,15,.14), transparent 62%),
     radial-gradient(800px 550px at 10% 6%, rgba(194,46,80,.09), transparent 60%),
@@ -55,12 +63,7 @@
       radial-gradient(1400px 900px at 50% 100%,transparent 40%,rgba(0,0,0,.12) 100%)}
   .hero-bg::after{content:'';position:absolute;inset:0;z-index:1;opacity:.2;mix-blend-mode:multiply;
     background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E")}
-  .hero-video-caption{position:absolute;z-index:3;left:clamp(20px,5vw,64px);bottom:14px;display:flex;align-items:center;gap:7px;
-    padding:6px 12px;border-radius:20px;background:rgba(255,255,255,.7);border:1px solid rgba(0,0,0,.1);
-    backdrop-filter:blur(8px);font-family:'Space Grotesk',sans-serif;font-size:11px;letter-spacing:.04em;color:var(--muted)}
-  .hero-video-caption b{color:var(--ink)}
-  @media(max-width:700px){.hero-video-caption{position:static;margin:10px auto 0;width:max-content}}
-  @media (prefers-reduced-motion: reduce){.hero-video{display:none}.hero-video-caption{display:none}}
+  @media (prefers-reduced-motion: reduce){.hero-video{display:none}}
   .hero-stage{position:relative;z-index:1;flex:1;display:flex;flex-direction:column;
     justify-content:flex-end;padding:44px 20px 0;min-height:300px}
   .hero-layout{position:relative;z-index:2;display:flex;align-items:flex-end;justify-content:flex-start;
@@ -75,9 +78,9 @@
   .hero-stage h1.hero-word{position:relative;z-index:1;margin:0;width:max-content;max-width:92vw;
     font-family:'Space Grotesk',sans-serif;font-weight:800;
     font-size:clamp(48px,8.6vw,128px);line-height:.84;letter-spacing:-.01em;
-    background:linear-gradient(95deg,#2b1c12 0%,var(--acc) 100%);
+    background:linear-gradient(95deg,#0c0c0d 0%,#5a5a5f 100%);
     -webkit-background-clip:text;background-clip:text;color:transparent;
-    filter:drop-shadow(0 0 34px rgba(214,67,15,.16))}
+    filter:drop-shadow(0 0 34px rgba(20,20,22,.14))}
   .hero-tagline{position:relative;z-index:3;max-width:500px;margin:18px 0 0;color:var(--muted);
     font-size:14.5px;line-height:1.7}
 
@@ -456,6 +459,8 @@
 </head>
 <body>
 
+<div class="grid-lift" id="gridLift" aria-hidden="true"></div>
+
 <!-- LOGIN / ONBOARDING OVERLAY -->
 <div class="overlay" id="overlay">
   <div class="auth">
@@ -564,10 +569,12 @@
     <button class="pill" data-view="hub" onclick="go('hub')">Hub</button>
   </nav>
   <div class="header-actions">
-    <button class="pill authpill" id="authBtn" onclick="handleAuthClick()">
-      <span class="authpill-pic" id="chipPic" style="display:none">R</span>
-      <span id="authLabel">Prihlásiť sa</span>
-    </button>
+    <div class="auth-pills">
+      <button class="pill authpill" id="authBtn" onclick="handleAuthClick()">
+        <span class="authpill-pic" id="chipPic" style="display:none">R</span>
+        <span id="authLabel">Prihlásiť sa</span>
+      </button>
+    </div>
     <button class="signout-btn" id="signOutBtn" onclick="signOut()" title="Odhlásiť" style="display:none">⏻</button>
   </div>
 </header>
@@ -578,11 +585,10 @@
   <section id="home" class="view">
     <div class="hero">
       <div class="hero-bg" aria-hidden="true">
-        <video class="hero-video" autoplay muted loop playsinline preload="metadata" poster="assets/hero-operator.png">
+        <video class="hero-video" autoplay muted loop playsinline preload="metadata" poster="assets/hero-operator.png" onloadedmetadata="this.playbackRate=0.6">
           <source src="assets/animo-ticker-loop-720p.webm" type="video/webm">
         </video>
       </div>
-      <div class="hero-video-caption"><i class="live-dot"></i><b>Naživo</b>&nbsp;z tréningovej session</div>
       <div class="hero-scanline" aria-hidden="true"></div>
       <div class="hero-fade" aria-hidden="true"></div>
       <div class="hero-stage">
@@ -2109,6 +2115,40 @@ renderHub();
 if(!(profile.onboarded && store.get('dz_session'))){ authTab('login');showOverlay(0); }
 else { go('hub'); }
 requestAnimationFrame(initHoverLift);
+
+/* a few dot-grid tiles lift slightly around the cursor */
+(function(){
+  const wrap=document.getElementById('gridLift');
+  if(!wrap||reduceMotion())return;
+  const CELL=64,RADIUS=2,SIZE=RADIUS*2+1;
+  const tiles=[];
+  for(let j=0;j<SIZE;j++){
+    for(let i=0;i<SIZE;i++){
+      const el=document.createElement('div');el.className='tile';
+      wrap.appendChild(el);
+      tiles.push({el,dx:i-RADIUS,dy:j-RADIUS});
+    }
+  }
+  let raf=null,mx=0,my=0;
+  function apply(){
+    const originX=Math.floor(mx/CELL)*CELL,
+      originY=Math.floor((my+window.scrollY)/CELL)*CELL-window.scrollY;
+    tiles.forEach(({el,dx,dy})=>{
+      const x=originX+dx*CELL,y=originY+dy*CELL;
+      const dist=Math.hypot(dx,dy),t=Math.max(0,1-dist/(RADIUS+0.35));
+      el.style.transform=`translate(${x}px,${y}px) translateY(${-(t*5)}px) scale(${1+t*0.05})`;
+      el.style.boxShadow=t>0?`0 ${5+t*8}px ${12+t*10}px rgba(20,20,22,${(0.05+t*0.09).toFixed(3)})`:'none';
+      el.style.backgroundColor=t>0?`rgba(255,255,255,${(0.3+t*0.35).toFixed(3)})`:'transparent';
+    });
+    raf=null;
+  }
+  window.addEventListener('mousemove',e=>{
+    mx=e.clientX;my=e.clientY;
+    wrap.classList.add('active');
+    if(!raf)raf=requestAnimationFrame(apply);
+  },{passive:true});
+  document.addEventListener('mouseleave',()=>wrap.classList.remove('active'));
+})();
 
 
 </script>
