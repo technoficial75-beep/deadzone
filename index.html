@@ -41,7 +41,7 @@
 
   .hero{position:relative;display:flex;flex-direction:column;
     width:100vw;margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw);margin-top:-101px;
-    min-height:max(440px,calc(100vh - 320px));border-radius:0;overflow:hidden}
+    min-height:clamp(420px,calc(100vh - 320px),600px);border-radius:0;overflow:hidden}
   .hero-bg{position:absolute;inset:0;z-index:0;overflow:hidden;background:
     radial-gradient(1100px 700px at 50% 90%, rgba(214,67,15,.14), transparent 62%),
     radial-gradient(800px 550px at 10% 6%, rgba(194,46,80,.09), transparent 60%),
@@ -55,12 +55,7 @@
       radial-gradient(1400px 900px at 50% 100%,transparent 40%,rgba(0,0,0,.12) 100%)}
   .hero-bg::after{content:'';position:absolute;inset:0;z-index:1;opacity:.2;mix-blend-mode:multiply;
     background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E")}
-  .hero-video-caption{position:absolute;z-index:3;left:clamp(20px,5vw,64px);bottom:14px;display:flex;align-items:center;gap:7px;
-    padding:6px 12px;border-radius:20px;background:rgba(255,255,255,.7);border:1px solid rgba(0,0,0,.1);
-    backdrop-filter:blur(8px);font-family:'Space Grotesk',sans-serif;font-size:11px;letter-spacing:.04em;color:var(--muted)}
-  .hero-video-caption b{color:var(--ink)}
-  @media(max-width:700px){.hero-video-caption{position:static;margin:10px auto 0;width:max-content}}
-  @media (prefers-reduced-motion: reduce){.hero-video{display:none}.hero-video-caption{display:none}}
+  @media (prefers-reduced-motion: reduce){.hero-video{display:none}}
   .hero-stage{position:relative;z-index:1;flex:1;display:flex;flex-direction:column;
     justify-content:flex-end;padding:44px 20px 0;min-height:300px}
   .hero-layout{position:relative;z-index:2;display:flex;align-items:flex-end;justify-content:flex-start;
@@ -578,11 +573,10 @@
   <section id="home" class="view">
     <div class="hero">
       <div class="hero-bg" aria-hidden="true">
-        <video class="hero-video" autoplay muted loop playsinline preload="metadata" poster="assets/hero-operator.png">
+        <video class="hero-video" autoplay muted loop playsinline preload="metadata" poster="assets/hero-operator.png" onloadedmetadata="this.playbackRate=0.6">
           <source src="assets/animo-ticker-loop-720p.webm" type="video/webm">
         </video>
       </div>
-      <div class="hero-video-caption"><i class="live-dot"></i><b>Naživo</b>&nbsp;z tréningovej session</div>
       <div class="hero-scanline" aria-hidden="true"></div>
       <div class="hero-fade" aria-hidden="true"></div>
       <div class="hero-stage">
