@@ -125,10 +125,20 @@
   .live-dot{width:6px;height:6px;border-radius:50%;background:var(--good);animation:blink 1.6s ease-in-out infinite}
   @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
   @media (prefers-reduced-motion: reduce){.live-dot{animation:none}}
-  @media(max-width:700px){.hero-layout{flex-direction:column;text-align:center}
+  .hero-tagline-mobile{display:none;position:relative;z-index:3;max-width:320px;margin:12px auto 0;
+    color:var(--muted);font-size:14px;line-height:1.55;text-align:center}
+  @media(max-width:700px){
+    .hero{min-height:auto}
+    .hero-stage{justify-content:center;padding:78px 20px 6px;min-height:0}
+    .hero-layout{flex-direction:column;text-align:center}
     .hero-copy{text-align:center;max-width:none}
     .hero-cta{justify-content:center}
-    .hero-tagline{margin-left:auto;margin-right:auto}}
+    .hero-tagline{display:none}
+    .hero-tagline-mobile{display:block}
+    .hero-word{margin:0 auto}
+    .hero-bottombar{padding-top:10px}
+    .hero-fade{height:50px}
+  }
 
   /* scanline sweep */
   .hero-scanline{position:absolute;z-index:1;left:0;right:0;height:120px;pointer-events:none;
@@ -666,6 +676,7 @@
             <h1 class="hero-word">DEADZONE</h1>
             <p class="hero-kicker">BOOSTNI SI SV<span>O</span>J AIM.</p>
             <p class="hero-tagline">DEADZONE je tréningová platforma pre FPS hráčov. Nastav si profil, prepočítaj citlivosť naprieč hrami (CS2, Valorant, Apex a ďalšie), trénuj presnosť a reakcie v sérii cielených drilov a sleduj svoj progres v prehľadnom Hube — všetko na jednom mieste, zadarmo.</p>
+            <p class="hero-tagline-mobile">Tréning presnosti a reakcie pre CS2, Valorant a Apex. Zadarmo, priamo v prehliadači.</p>
             <div class="hero-cta">
               <button class="btn primary sm" onclick="go('setup')">Nastaviť profil ▸</button>
               <button class="btn ghost sm" onclick="go('cs2')">Rovno trénovať</button>
@@ -1251,6 +1262,7 @@ function countTo(id,target,opts){
 /* one-time staggered reveal of the hero HUD when the home view becomes active */
 let heroPlayed=false;
 function playHeroEntrance(){
+  if(heroPlayed)return;
   if(!window.gsap)return;
   const stage=document.querySelector('.hero-stage');if(!stage)return;
   if(reduceMotion()){heroPlayed=true;return;}
