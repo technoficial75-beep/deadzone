@@ -997,6 +997,8 @@
         <div class="mode" tabindex="0" role="button" onclick="startMode('reaction')"><h4>Reaction Time</h4><span>Počkaj na zelenú a klikni čo najrýchlejšie. 5 pokusov.</span><span class="go">SPUSTIŤ ▸</span></div>
         <div class="mode cs-only" id="modeStrafeCard" tabindex="0" role="button" onclick="startMode('strafe')"><h4>Counter-Strafe</h4><span>Si gulička čo strieľa guličky — výstrel ide len po counter-strafe. Nastavenia meníš naživo priamo v hre.</span><span class="go">SPUSTIŤ ▸</span></div>
         <div class="mode cs-only" tabindex="0" role="button" onclick="startMode('doors')"><h4>Dust2 Doors Peek</h4><span>Terč blikne v medzere po otvorení dverí. Zasiahni ho včas.</span><span class="go">SPUSTIŤ ▸</span></div>
+        <div class="mode val-only" tabindex="0" role="button" onclick="startMode('onetap')"><h4>One-Tap Duel</h4><span>Ako Operator — jeden terč, jeden výstrel. Netrafíš, terč zmizne. Testuje čistý prvý headshot, nie spam.</span><span class="go">SPUSTIŤ ▸</span></div>
+        <div class="mode apex-only" tabindex="0" role="button" onclick="startMode('track')"><h4>Track &amp; Spray</h4><span>Terč sa neustále uhýba ako pri strafe-boji. Drž ĽM a sleduj ho čo najdlhšie — meria sa presnosť trackingu.</span><span class="go">SPUSTIŤ ▸</span></div>
       </div>
     </div>
 
@@ -1151,9 +1153,11 @@ function go(id){
     const ss=document.getElementById('strafeSetup');if(ss)ss.style.display='none';
     const aw=document.getElementById('arenaWrap');if(aw)aw.style.display='none';
     const gn=document.getElementById('trainGameName');if(gn)gn.textContent=trainGame;
-    const isCs2=trainGame==='CS2';
-    document.querySelectorAll('.mode.cs-only').forEach(el=>el.style.display=isCs2?'':'none');
-    const ts=document.getElementById('trainSub');if(ts)ts.textContent=isCs2?'4 tréningové scenáre. Klikni na kartu.':'2 tréningové scenáre. Klikni na kartu.';}
+    document.querySelectorAll('.mode.cs-only').forEach(el=>el.style.display=trainGame==='CS2'?'':'none');
+    document.querySelectorAll('.mode.val-only').forEach(el=>el.style.display=trainGame==='Valorant'?'':'none');
+    document.querySelectorAll('.mode.apex-only').forEach(el=>el.style.display=trainGame==='Apex'?'':'none');
+    const modeCount={CS2:4,Valorant:3,Apex:3}[trainGame]||2;
+    const ts=document.getElementById('trainSub');if(ts)ts.textContent=modeCount+' tréningové scenáre. Klikni na kartu.';}
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
@@ -1307,7 +1311,7 @@ function addPlaytime(sec,game){
 /* ---------- arena engine ---------- */
 const arena=()=>document.getElementById('arena');
 let raf=null, timers=[], mode=null;
-function clearArena(){if(!arena())return;arena().innerHTML='';timers.forEach(clearInterval);timers.forEach(clearTimeout);timers=[];if(raf)cancelAnimationFrame(raf);raf=null;arena().onmousedown=null;document.onkeydown=null;document.onkeyup=null;}
+function clearArena(){if(!arena())return;arena().innerHTML='';timers.forEach(clearInterval);timers.forEach(clearTimeout);timers=[];if(raf)cancelAnimationFrame(raf);raf=null;arena().onmousedown=null;arena().onmousemove=null;arena().onmouseup=null;document.onkeydown=null;document.onkeyup=null;document.onmouseup=null;}
 function stopMode(){if(playStart){addPlaytime(Math.round((Date.now()-playStart)/1000),playGame);playStart=0;}const w=document.getElementById('arenaWrap');if(w)w.style.display='none';const c=document.getElementById('csConfig');if(c)c.style.display='none';const l=document.getElementById('csLayout');if(l)l.style.gridTemplateColumns='1fr';clearArena();mode=null;}
 let playStart=0, playGame='CS2';
 function setStats(k1,v1,k2,v2,k3,v3){
@@ -1369,6 +1373,8 @@ function startMode(m){
   if(m==='reaction')modeReaction();
   if(m==='strafe')modeStrafe();
   if(m==='doors')modeDoors();
+  if(m==='onetap')modeOnetap();
+  if(m==='track')modeTrack();
 }
 function cfgLabel(){
   const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
@@ -1579,6 +1585,63 @@ function modeDoors(){
   const cap=setInterval(()=>{if(shown>=15){alive=false;clearInterval(cap);const acc=shots?Math.round(hits/shots*100):0;recordAcc(acc);addHits(hits);
     A.innerHTML=`<div class="msg"><div class="big">${hits}/${shown}</div><h2>zásahov</h2><p>Presnosť ${acc}% · uložené</p></div>`;A.onmousedown=null;}},300);
   timers.push(cap);
+}
+
+/* --- Valorant: One-Tap Duel (Operator-style — one target, one shot, miss and it's gone) --- */
+function modeOnetap(){
+  const A=arena();let hits=0,shots=0,shown=0,alive=true,streak=0,bestStreak=0;
+  A.innerHTML=`<div class="cs-hint">Jeden terč, jeden výstrel — ako Operator flick. Netrafíš prvou ranou, terč zmizne.</div>`;
+  setStats('Zásahy','0','Presnosť','—','Séria','0');
+  function upd(){const acc=shots?Math.round(hits/shots*100):0;
+    document.getElementById('s1').textContent=hits;document.getElementById('s2').textContent=acc+'%';document.getElementById('s3').textContent=streak;}
+  function round(){if(!alive)return;const size=18+Math.random()*10;
+    const t=document.createElement('div');t.className='target';
+    t.style.width=t.style.height=size+'px';t.style.left=(8+Math.random()*84)+'%';t.style.top=(12+Math.random()*76)+'%';
+    t.onmousedown=e=>{e.stopPropagation();shown++;hits++;shots++;streak++;bestStreak=Math.max(bestStreak,streak);upd();clearTimeout(to);round();};
+    A.appendChild(t);
+    const to=setTimeout(()=>{shown++;shots++;streak=0;upd();round();},950);timers.push(to);}
+  A.onmousedown=()=>{shots++;streak=0;upd();};
+  round();
+  const cap=setInterval(()=>{if(shown>=15){alive=false;clearInterval(cap);const acc=shots?Math.round(hits/shots*100):0;recordAcc(acc);addHits(hits);
+    A.innerHTML=`<div class="msg"><div class="big">${hits}/${shown}</div><h2>zásahov</h2><p>Presnosť ${acc}% · najlepšia séria ${bestStreak} · uložené</p></div>`;A.onmousedown=null;}},300);
+  timers.push(cap);
+}
+
+/* --- Apex: Track & Spray (continuous tracking — hold LMB, follow a strafing target) --- */
+function modeTrack(){
+  const A=arena();
+  A.innerHTML=`<div class="cs-hint">Drž ĽM a sleduj terč, kým sa uhýba. Meria sa % času, čo si na ňom presne mieril.</div>`;
+  setStats('Presnosť trackingu','0%','Zostáva','20s','Séria','0s');
+  const r=19;
+  const t=document.createElement('div');t.className='target';t.style.cssText=`width:${r*2}px;height:${r*2}px;position:absolute;transform:translate(-50%,-50%)`;
+  A.appendChild(t);
+  const W=A.clientWidth,H=A.clientHeight;
+  let tx=W*0.5,ty=H*0.5,vx=80,vy=50,mx=tx,my=ty,down=false;
+  let onMs=0,totalMs=0,streakMs=0,bestStreakMs=0;
+  const dur=20000;let start=performance.now(),lastT=start,nextTurn=start+300+Math.random()*500;
+  A.onmousemove=e=>{const rect=A.getBoundingClientRect();mx=e.clientX-rect.left;my=e.clientY-rect.top;};
+  A.onmousedown=()=>{down=true;};
+  document.onmouseup=()=>{down=false;};
+  function loop(now){
+    const dt=Math.min(50,now-lastT);lastT=now;const elapsed=now-start;
+    if(now>nextTurn){vx=(Math.random()<0.5?-1:1)*(60+Math.random()*70);vy=(Math.random()<0.5?-1:1)*(40+Math.random()*50);nextTurn=now+300+Math.random()*500;}
+    tx+=vx*dt/1000;ty+=vy*dt/1000;
+    if(tx<r){tx=r;vx=Math.abs(vx);} if(tx>W-r){tx=W-r;vx=-Math.abs(vx);}
+    if(ty<r){ty=r;vy=Math.abs(vy);} if(ty>H-r){ty=H-r;vy=-Math.abs(vy);}
+    t.style.left=tx+'px';t.style.top=ty+'px';
+    const onTarget=down&&Math.hypot(mx-tx,my-ty)<=r;
+    totalMs+=dt;
+    if(onTarget){onMs+=dt;streakMs+=dt;bestStreakMs=Math.max(bestStreakMs,streakMs);}else streakMs=0;
+    const pct=totalMs?Math.round(onMs/totalMs*100):0;
+    document.getElementById('s1').textContent=pct+'%';
+    document.getElementById('s2').textContent=Math.max(0,Math.ceil((dur-elapsed)/1000))+'s';
+    document.getElementById('s3').textContent=(streakMs/1000).toFixed(1)+'s';
+    if(elapsed>=dur){const finalPct=totalMs?Math.round(onMs/totalMs*100):0;recordAcc(finalPct);addHits(Math.round(onMs/100));
+      A.innerHTML=`<div class="msg"><div class="big">${finalPct}%</div><h2>čas na cieli</h2><p>Najlepšia séria ${(bestStreakMs/1000).toFixed(1)}s · uložené</p></div>`;
+      A.onmousedown=null;A.onmousemove=null;document.onmouseup=null;return;}
+    raf=requestAnimationFrame(loop);
+  }
+  raf=requestAnimationFrame(loop);
 }
 
 /* ---------- Sens Finder (pointer-locked flick calibration) ----------
