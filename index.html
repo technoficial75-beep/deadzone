@@ -3,7 +3,41 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DEADZONE — Aim Trainer</title>
+<title>DEADZONE — Bezplatný online Aim Trainer pre CS2, Valorant a Apex</title>
+<meta name="description" content="DEADZONE je bezplatný online aim trainer priamo v prehliadači. Prepočítaj citlivosť (cm/360°, eDPI) pre CS2, Valorant a Apex Legends, trénuj presnosť, reakciu a counter-strafe — bez inštalácie, bez platieb.">
+<meta name="keywords" content="aim trainer, online aim trainer, CS2 aim trainer, Valorant sens finder, sensitivity converter, cm/360, eDPI, counter-strafe training, reaction time trainer, FPS tréning, DEADZONE">
+<meta name="robots" content="index, follow">
+<meta name="author" content="DEADZONE">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="DEADZONE">
+<meta property="og:title" content="DEADZONE — Bezplatný online Aim Trainer pre CS2, Valorant a Apex">
+<meta property="og:description" content="Prepočítaj citlivosť a trénuj presnosť, reakciu a counter-strafe priamo v prehliadači. Zadarmo, bez inštalácie.">
+<meta property="og:image" content="assets/hero-operator.png">
+<meta property="og:locale" content="sk_SK">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="DEADZONE — Bezplatný online Aim Trainer">
+<meta name="twitter:description" content="Bezplatný FPS aim trainer pre CS2, Valorant a Apex Legends. Prepočet citlivosti, tréning presnosti a reakcie priamo v prehliadači.">
+<meta name="twitter:image" content="assets/hero-operator.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "DEADZONE",
+  "alternateName": "DEADZONE Aim Trainer",
+  "description": "Bezplatný online aim trainer pre CS2, Valorant a Apex Legends. Prepočet citlivosti (cm/360°, eDPI), tréning presnosti, reakcie a counter-strafe priamo v prehliadači, bez inštalácie.",
+  "applicationCategory": "GameApplication",
+  "operatingSystem": "Any (web browser)",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
+  "inLanguage": "sk",
+  "featureList": [
+    "Prepočet citlivosti (cm/360°, eDPI) naprieč hrami",
+    "Aim tréning",
+    "Reaction time tréning",
+    "Counter-strafe tréning",
+    "Podpora CS2, Valorant a Apex Legends"
+  ]
+}
+</script>
 <style>
   :root{
     --bg:#f5f5f3; --panel:#ffffff; --panel-2:#f0f0ee; --line:#e2e2de;
@@ -20,13 +54,13 @@
     font-family:'Inter',ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif;
     -webkit-font-smoothing:antialiased;overflow-x:hidden;
   }
-  .grid-lift{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0;transition:opacity .3s ease}
-  .grid-lift.active{opacity:1}
-  .grid-lift .tile{position:absolute;top:0;left:0;width:64px;height:64px;border-radius:5px;
-    background:transparent;box-shadow:none;
-    transition:transform .3s cubic-bezier(.2,.8,.2,1),box-shadow .3s ease,background-color .3s ease}
-  @media (prefers-reduced-motion: reduce){.grid-lift{display:none}}
-  @media (hover:none){.grid-lift{display:none}}
+  .grid-spotlight{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0;transition:opacity .4s ease;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Cline x1='1' y1='1' x2='64' y2='1' stroke='rgba(214,67,15,0.45)' stroke-width='1'/%3E%3Cline x1='1' y1='1' x2='1' y2='64' stroke='rgba(214,67,15,0.45)' stroke-width='1'/%3E%3Ccircle cx='1' cy='1' r='1.8' fill='rgba(214,67,15,0.8)'/%3E%3C/svg%3E");
+    -webkit-mask-image:radial-gradient(220px circle at var(--sx,50%) var(--sy,40%),#000 0%,transparent 72%);
+    mask-image:radial-gradient(220px circle at var(--sx,50%) var(--sy,40%),#000 0%,transparent 72%)}
+  .grid-spotlight.active{opacity:1}
+  @media (prefers-reduced-motion: reduce){.grid-spotlight{display:none}}
+  @media (hover:none){.grid-spotlight{display:none}}
   h1,h2,h3,h4{font-family:'Space Grotesk','Inter',sans-serif;letter-spacing:-.01em;font-weight:600}
   header{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:24px;
     padding:14px 28px;background:transparent;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
@@ -182,6 +216,22 @@
   .section-head{display:flex;align-items:baseline;gap:14px;margin-bottom:26px;flex-wrap:wrap}
   .section-head h2{font-size:26px}
   .section-head .sub{color:var(--muted);font-size:13px}
+  .compare-scroll{margin-top:64px;padding-top:10px;perspective:1400px}
+  .compare-card{max-width:900px;margin:0 auto;border:1px solid #2a2a2d;border-radius:24px;background:#161618;
+    padding:5px;box-shadow:0 30px 60px rgba(0,0,0,.28),0 10px 24px rgba(0,0,0,.18);
+    transform:rotateX(var(--cc-rot,16deg)) scale(var(--cc-scale,.94));transform-origin:top center;will-change:transform}
+  .compare-card-inner{border-radius:20px;background:linear-gradient(160deg,#1b1b1e,#141416);padding:clamp(18px,3.2vw,34px);overflow:hidden}
+  .compare-row{display:grid;grid-template-columns:1.1fr 1.4fr 1.6fr;gap:14px;padding:14px 6px;border-top:1px solid rgba(255,255,255,.08);
+    align-items:center;font-size:13.5px;color:#c8c8cc}
+  .compare-row:first-child{border-top:none}
+  .compare-row-head{color:#fff;font-family:'Space Grotesk',sans-serif;font-weight:700;letter-spacing:.02em;font-size:14px}
+  .compare-row span:first-child{color:#8b8b90;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:12.5px;letter-spacing:.04em;text-transform:uppercase}
+  .compare-row .ok{color:#5fd499}
+  .compare-row .no{color:#8b8b90}
+  @media(max-width:700px){.compare-row{grid-template-columns:1fr;gap:2px;padding:14px 4px}
+    .compare-row span:first-child{margin-bottom:2px}
+    .compare-row-head span:not(:first-child){display:none}}
+  @media (prefers-reduced-motion: reduce){.compare-card{transform:none}}
   .games{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
   .game{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:26px 22px;cursor:pointer;transition:.18s;overflow:hidden}
   .game:hover:not(.locked){transform:translateY(-3px);border-color:#37373b}
@@ -459,7 +509,7 @@
 </head>
 <body>
 
-<div class="grid-lift" id="gridLift" aria-hidden="true"></div>
+<div class="grid-spotlight" id="gridSpotlight" aria-hidden="true"></div>
 
 <!-- LOGIN / ONBOARDING OVERLAY -->
 <div class="overlay" id="overlay">
@@ -585,7 +635,7 @@
   <section id="home" class="view">
     <div class="hero">
       <div class="hero-bg" aria-hidden="true">
-        <video class="hero-video" autoplay muted loop playsinline preload="metadata" poster="assets/hero-operator.png" onloadedmetadata="this.playbackRate=0.6">
+        <video class="hero-video" autoplay muted loop playsinline preload="metadata" poster="assets/hero-operator.png">
           <source src="assets/animo-ticker-loop-720p.webm" type="video/webm">
         </video>
       </div>
@@ -621,16 +671,37 @@
 
     <div class="marquee" aria-hidden="true">
       <div class="marquee-track">
-        <span>CS2 LIVE TERAZ</span><span class="dot">●</span>
-        <span>SENS FINDER</span><span class="dot">●</span>
-        <span>COUNTER-STRAFE</span><span class="dot">●</span>
-        <span>REACTION TIME</span><span class="dot">●</span>
-        <span>DUST2 DOORS PEEK</span><span class="dot">●</span>
-        <span>CS2 LIVE TERAZ</span><span class="dot">●</span>
-        <span>SENS FINDER</span><span class="dot">●</span>
-        <span>COUNTER-STRAFE</span><span class="dot">●</span>
-        <span>REACTION TIME</span><span class="dot">●</span>
-        <span>DUST2 DOORS PEEK</span><span class="dot">●</span>
+        <span>PRESNOSŤ</span><span class="dot">●</span>
+        <span>REAKCIA</span><span class="dot">●</span>
+        <span>KONZISTENCIA</span><span class="dot">●</span>
+        <span>ZADARMO · BEZ INŠTALÁCIE</span><span class="dot">●</span>
+        <span>CS2</span><span class="dot">●</span>
+        <span>VALORANT</span><span class="dot">●</span>
+        <span>APEX LEGENDS</span><span class="dot">●</span>
+        <span>PRESNOSŤ</span><span class="dot">●</span>
+        <span>REAKCIA</span><span class="dot">●</span>
+        <span>KONZISTENCIA</span><span class="dot">●</span>
+        <span>ZADARMO · BEZ INŠTALÁCIE</span><span class="dot">●</span>
+        <span>CS2</span><span class="dot">●</span>
+        <span>VALORANT</span><span class="dot">●</span>
+        <span>APEX LEGENDS</span><span class="dot">●</span>
+      </div>
+    </div>
+
+    <div class="compare-scroll" id="compareScroll">
+      <div class="section-head" style="justify-content:center;text-align:center">
+        <h2>Prečo DEADZONE namiesto iných aim trainerov?</h2>
+        <span class="sub">// porovnanie na prvý pohľad</span>
+      </div>
+      <div class="compare-card" id="compareCard">
+        <div class="compare-card-inner">
+          <div class="compare-row compare-row-head"><span></span><span>DEADZONE</span><span>Iné aim trainery</span></div>
+          <div class="compare-row"><span>Cena</span><span class="ok">✓ Zadarmo navždy</span><span class="no">✕ Free verzia obmedzená / predplatné</span></div>
+          <div class="compare-row"><span>Prístup</span><span class="ok">✓ Priamo v prehliadači</span><span class="no">✕ Nutná inštalácia cez Steam</span></div>
+          <div class="compare-row"><span>Prepočet citlivosti</span><span class="ok">✓ Automaticky pre CS2, Valorant, Apex</span><span class="no">✕ Chýba alebo ručný výpočet</span></div>
+          <div class="compare-row"><span>Jazyk</span><span class="ok">✓ Slovenčina</span><span class="no">✕ Väčšinou len angličtina</span></div>
+          <div class="compare-row"><span>Reálne scenáre</span><span class="ok">✓ Counter-strafe, Dust2 doors peek</span><span class="no">✕ Generické drily bez kontextu hry</span></div>
+        </div>
       </div>
     </div>
 
@@ -664,6 +735,15 @@
       <div class="step"><div class="step-n">02</div><h3>Trénuj</h3><p>Vyber si mód: aim, reakcia, counter-strafe alebo peekovanie cez dvere.</p></div>
       <div class="step"><div class="step-n">03</div><h3>Sleduj pokrok</h3><p>Hub si pamätá tvoje najlepšie výsledky a hodnotenie.</p></div>
     </div>
+
+    <div class="section-head" style="margin-top:64px"><h2>O projekte</h2><span class="sub">// prečo DEADZONE existuje</span></div>
+    <div class="about-wide" style="margin-top:0"><p>Zlepšiť sa v FPS neznamená hrať viac hodín, ale trénovať správne veci. DEADZONE rozkladá aim na časti, ktoré sa dajú merať: presnosť, reakcia, kontrola pohybu (counter-strafe) a peekovanie cez uhly. Všetko v prehliadači, zadarmo, bez inštalácie.</p></div>
+    <div class="about">
+      <div class="card"><div class="num">/ MYŠ</div><h3>Konzistencia</h3><p>Rovnaká citlivosť v tréneri ako v hre = svalová pamäť ktorá prenáša.</p></div>
+      <div class="card"><div class="num">/ MOZOG</div><h3>Reflex</h3><p>Reaction training skracuje čas medzi „vidím" a „strieľam".</p></div>
+      <div class="card"><div class="num">/ NOHY</div><h3>Pohyb</h3><p>Counter-strafe ťa naučí zastaviť presne a strieľať na 100 % presnosť.</p></div>
+    </div>
+    <div style="text-align:center;margin-top:28px"><button class="btn ghost sm" onclick="go('about')">Viac o projekte ▸</button></div>
 
     <div class="cta-band">
       <div class="cta-band-inner">
@@ -2116,40 +2196,43 @@ if(!(profile.onboarded && store.get('dz_session'))){ authTab('login');showOverla
 else { go('hub'); }
 requestAnimationFrame(initHoverLift);
 
-/* a few dot-grid tiles lift slightly around the cursor */
+/* a soft spotlight reveals the dot-grid pattern near the cursor, easing to follow */
 (function(){
-  const wrap=document.getElementById('gridLift');
-  if(!wrap||reduceMotion())return;
-  const CELL=64,RADIUS=2,SIZE=RADIUS*2+1;
-  const tiles=[];
-  for(let j=0;j<SIZE;j++){
-    for(let i=0;i<SIZE;i++){
-      const el=document.createElement('div');el.className='tile';
-      wrap.appendChild(el);
-      tiles.push({el,dx:i-RADIUS,dy:j-RADIUS});
-    }
-  }
-  let raf=null,mx=0,my=0;
-  function apply(){
-    const originX=Math.floor(mx/CELL)*CELL,
-      originY=Math.floor((my+window.scrollY)/CELL)*CELL-window.scrollY;
-    tiles.forEach(({el,dx,dy})=>{
-      const x=originX+dx*CELL,y=originY+dy*CELL;
-      const dist=Math.hypot(dx,dy),t=Math.max(0,1-dist/(RADIUS+0.35));
-      el.style.transform=`translate(${x}px,${y}px) translateY(${-(t*5)}px) scale(${1+t*0.05})`;
-      el.style.boxShadow=t>0?`0 ${5+t*8}px ${12+t*10}px rgba(20,20,22,${(0.05+t*0.09).toFixed(3)})`:'none';
-      el.style.backgroundColor=t>0?`rgba(255,255,255,${(0.3+t*0.35).toFixed(3)})`:'transparent';
-    });
-    raf=null;
+  const el=document.getElementById('gridSpotlight');
+  if(!el||reduceMotion())return;
+  let tx=innerWidth/2,ty=innerHeight*0.4,cx=tx,cy=ty,raf=null;
+  function loop(){
+    cx+=(tx-cx)*0.12;cy+=(ty-cy)*0.12;
+    document.documentElement.style.setProperty('--sx',cx+'px');
+    document.documentElement.style.setProperty('--sy',cy+'px');
+    raf=(Math.abs(tx-cx)>0.5||Math.abs(ty-cy)>0.5)?requestAnimationFrame(loop):null;
   }
   window.addEventListener('mousemove',e=>{
-    mx=e.clientX;my=e.clientY;
-    wrap.classList.add('active');
-    if(!raf)raf=requestAnimationFrame(apply);
+    tx=e.clientX;ty=e.clientY;
+    el.classList.add('active');
+    if(!raf)raf=requestAnimationFrame(loop);
   },{passive:true});
-  document.addEventListener('mouseleave',()=>wrap.classList.remove('active'));
+  document.addEventListener('mouseleave',()=>el.classList.remove('active'));
 })();
 
+/* comparison card tilts flat and scales up as it scrolls into view */
+(function(){
+  const card=document.getElementById('compareCard');
+  if(!card||reduceMotion())return;
+  let raf=null;
+  function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+  function update(){
+    const rect=card.getBoundingClientRect();
+    const progress=clamp((innerHeight-rect.top)/(innerHeight*0.9+rect.height*0.4),0,1);
+    card.style.setProperty('--cc-rot',(16*(1-progress))+'deg');
+    card.style.setProperty('--cc-scale',(0.94+0.06*progress).toFixed(3));
+    raf=null;
+  }
+  function onScroll(){ if(!raf)raf=requestAnimationFrame(update); }
+  window.addEventListener('scroll',onScroll,{passive:true});
+  window.addEventListener('resize',onScroll);
+  update();
+})();
 
 </script>
 </body>

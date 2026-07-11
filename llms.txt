@@ -1,0 +1,32 @@
+# DEADZONE
+
+> Bezplatný online aim trainer pre FPS hráčov, priamo v prehliadači. Bez inštalácie, bez platieb.
+
+DEADZONE pomáha hráčom strieľačiek z pohľadu prvej osoby (FPS) zlepšiť sa v mierení tréningom
+konkrétnych, merateľných zručností namiesto len odohratých hodín v hre.
+
+## Čo DEADZONE robí
+
+- Prepočet citlivosti (sensitivity) medzi hrami — cm/360° a eDPI pre CS2, Valorant a Apex Legends.
+- Aim tréning zameraný na presnosť.
+- Tréning reakčného času (reaction time).
+- Counter-strafe tréning (presné zastavenie a streľba).
+- Nácvik peekovania cez uhly a dvere (napr. Dust2 doors) na konkrétnych herných mapách.
+- Hub so štatistikami: presnosť, reakcia, skóre — na jednom mieste.
+
+## Pre koho je DEADZONE
+
+Hráči CS2, Valorant a Apex Legends, ktorí chcú trénovať mierenie efektívnejšie a s presne
+prepočítanou citlivosťou zodpovedajúcou ich nastaveniu v hre.
+
+## Kľúčové vlastnosti
+
+- Beží priamo v prehliadači — žiadna inštalácia ani desktopová aplikácia.
+- Úplne zadarmo.
+- Dá sa vyskúšať ako hosť, bez registrácie.
+- Údaje profilu a štatistiky sa ukladajú lokálne v prehliadači.
+- Slovenské rozhranie.
+
+## Odkazy
+
+- Domovská stránka: /index.html
