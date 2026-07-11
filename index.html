@@ -21,7 +21,7 @@
   }
   h1,h2,h3,h4{font-family:'Space Grotesk','Inter',sans-serif;letter-spacing:-.01em;font-weight:600}
   header{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:24px;
-    padding:14px 28px;background:rgba(10,10,11,.86);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+    padding:14px 28px;background:transparent;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
   .logo{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:19px;letter-spacing:.02em;display:flex;align-items:center;gap:9px;cursor:pointer}
   .logo .dot{width:8px;height:8px;background:var(--acc);border-radius:2px}
   .nav-pills{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;gap:2px;
@@ -38,7 +38,7 @@
   @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 
   .hero{position:relative;display:flex;flex-direction:column;
-    width:100vw;margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw);margin-top:-40px;
+    width:100vw;margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw);margin-top:-101px;
     min-height:max(640px,calc(100vh - 64px));border-radius:0;overflow:hidden}
   .hero-bg{position:absolute;inset:0;z-index:0;background:
     radial-gradient(1100px 700px at 50% 90%, rgba(139,92,246,.5), transparent 62%),
@@ -78,8 +78,8 @@
 
   /* HUD corner brackets + floating tags */
   .hud-corner{position:absolute;z-index:2;width:26px;height:26px;border:2px solid rgba(255,255,255,.28);pointer-events:none}
-  .hud-tl{top:22px;left:22px;border-right:none;border-bottom:none}
-  .hud-tr{top:22px;right:22px;border-left:none;border-bottom:none}
+  .hud-tl{top:82px;left:22px;border-right:none;border-bottom:none}
+  .hud-tr{top:82px;right:22px;border-left:none;border-bottom:none}
   .hud-bl{bottom:22px;left:22px;border-right:none;border-top:none}
   .hud-br{bottom:22px;right:22px;border-left:none;border-top:none}
   .hud-tag{position:absolute;z-index:3;display:flex;align-items:center;gap:7px;padding:7px 13px;border-radius:20px;
