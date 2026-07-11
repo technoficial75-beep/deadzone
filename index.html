@@ -380,6 +380,7 @@
     font-family:'Space Grotesk';font-weight:600;font-size:9px;letter-spacing:.05em;color:#fff}
   .cover-live-badge .live-dot{width:5px;height:5px}
   .cover-logo{position:absolute;top:10px;left:10px;z-index:2;display:flex;flex-direction:column;line-height:.98}
+  .cover-tag~.cover-logo{max-width:calc(100% - 70px)}
   .soon-badge{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
     background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.15);color:var(--ink);font-family:'Space Grotesk';font-weight:600;
     letter-spacing:.04em;font-size:10px;padding:5px 10px;border-radius:7px;z-index:3;white-space:nowrap}
@@ -425,9 +426,38 @@
     border:2px solid var(--acc-2);border-radius:50%;opacity:.8}
   .sf-reticle::before,.sf-reticle::after{content:'';position:absolute;background:var(--acc)}
   .sf-reticle::before{left:50%;top:-9px;width:2px;height:78px;transform:translateX(-50%);opacity:.4}
-  .sf-reticle::after{top:50%;left:-9px;height:2px;width:78px;transform:translateY(-50%);opacity:.4}  .fortart{background:linear-gradient(160deg,#4a5fbf,#221e33)}
-  .apexart{background:linear-gradient(160deg,#a8353f,#1a1a1a)}
+  .sf-reticle::after{top:50%;left:-9px;height:2px;width:78px;transform:translateY(-50%);opacity:.4}
+  .fortart{background:linear-gradient(160deg,#4a5fbf,#221e33)}
   .val-logo,.fort-logo,.apex-logo{font-family:'Space Grotesk';font-weight:600;color:#fff;letter-spacing:.01em;font-size:12.5px;text-shadow:0 2px 6px rgba(0,0,0,.5)}
+
+  /* generic humanoid silhouette for game covers (tinted per-game via --fig-*) */
+  .cover-figure{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:74%;height:66%;
+    background:radial-gradient(ellipse at 50% 30%,var(--fig-a,#2a2a2d) 0%,var(--fig-b,#151517) 60%,transparent 72%);
+    clip-path:polygon(30% 0,70% 0,82% 40%,78% 100%,22% 100%,18% 40%);opacity:.85}
+  .cover-figure::after{content:'';position:absolute;top:16%;left:50%;transform:translateX(-50%);width:34%;height:34%;
+    background:radial-gradient(circle at 50% 40%,var(--fig-h1,#38383c),var(--fig-h2,#18181a));border-radius:50% 50% 45% 45%}
+  .cover-tag{position:absolute;top:8px;right:8px;z-index:3;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.15);
+    border-radius:20px;padding:3px 9px;font-family:'Space Grotesk';font-weight:600;font-size:9px;letter-spacing:.05em;color:#fff}
+
+  /* Valorant cover art — angular red/black slash, agent silhouette */
+  .valart{background:linear-gradient(160deg,#ff4655 0%,#3a1c24 55%,#161014 100%)}
+  .valart::before{content:'';position:absolute;inset:0;background:
+    repeating-linear-gradient(115deg,rgba(255,255,255,.05) 0 2px,transparent 2px 28px)}
+  .valart::after{content:'';position:absolute;top:40%;left:-14%;width:128%;height:15%;
+    background:linear-gradient(100deg,transparent,rgba(255,255,255,.92) 46%,rgba(255,255,255,.92) 54%,transparent);
+    transform:rotate(-16deg);opacity:.85}
+  .val-logo{font-size:10.5px;letter-spacing:0;white-space:nowrap}
+  .val-sub{display:block;font-family:'Space Grotesk';font-weight:500;font-size:8px;letter-spacing:.16em;
+    color:rgba(255,255,255,.7);text-transform:uppercase;margin-top:2px}
+
+  /* Apex Legends cover art — hex pattern, legend silhouette */
+  .apexart{background:linear-gradient(160deg,#ff6a3d 0%,#5c1f16 55%,#1a1006 100%);position:relative}
+  .apexart::before{content:'';position:absolute;inset:0;opacity:.5;background:
+    repeating-linear-gradient(60deg,rgba(255,255,255,.05) 0 2px,transparent 2px 22px),
+    repeating-linear-gradient(-60deg,rgba(255,255,255,.05) 0 2px,transparent 2px 22px)}
+  .apex-logo{font-size:14px}
+  .apex-sub{display:block;font-family:'Space Grotesk';font-weight:500;font-size:8px;letter-spacing:.16em;
+    color:rgba(255,255,255,.7);text-transform:uppercase;margin-top:2px}
 
   [role="button"]{outline-offset:2px}
   [role="button"]:focus-visible{outline:2px solid var(--acc-2)}
@@ -751,7 +781,7 @@
     <div class="library">
 
       <!-- CS2 -->
-      <div class="cover live" data-status="live" tabindex="0" role="button" onclick="go('cs2')">
+      <div class="cover live" data-status="live" tabindex="0" role="button" onclick="openTraining('CS2')">
         <div class="cover-art cs2art">
           <div class="cover-live-badge"><i class="live-dot"></i>LIVE</div>
           <div class="cover-logo"><span class="cs-counter">COUNTER</span><span class="cs-strike">STRIKE <span class="cs-2">2</span></span></div>
@@ -770,6 +800,26 @@
         <div class="cover-foot"><span class="hrs">nástroj</span><span class="play">NÁJSŤ ▸</span></div>
       </div>
 
+      <!-- Valorant -->
+      <div class="cover live" data-status="live" tabindex="0" role="button" onclick="openTraining('Valorant')">
+        <div class="cover-art valart">
+          <div class="cover-tag">TRÉNING</div>
+          <div class="cover-logo"><span class="val-logo">VALORANT</span><span class="val-sub">Riot Games</span></div>
+          <div class="cover-figure" style="--fig-a:#ff8a94;--fig-b:#3d1b22;--fig-h1:#ffb3ba;--fig-h2:#3d1b22"></div>
+        </div>
+        <div class="cover-foot"><span class="hrs" id="hrsVal">0.0 hodín</span><span class="play">HRAŤ ▸</span></div>
+      </div>
+
+      <!-- Apex Legends -->
+      <div class="cover live" data-status="live" tabindex="0" role="button" onclick="openTraining('Apex')">
+        <div class="cover-art apexart">
+          <div class="cover-tag">TRÉNING</div>
+          <div class="cover-logo"><span class="apex-logo">APEX</span><span class="apex-sub">Legends</span></div>
+          <div class="cover-figure" style="--fig-a:#ffb199;--fig-b:#3a1c14;--fig-h1:#ffd0bb;--fig-h2:#3a1c14"></div>
+        </div>
+        <div class="cover-foot"><span class="hrs" id="hrsApex">0.0 hodín</span><span class="play">HRAŤ ▸</span></div>
+      </div>
+
       <!-- Add game placeholder -->
       <div class="lib-add" tabindex="0" role="button" title="Pridávanie vlastných hier čoskoro">
         <span class="plus">+</span>
@@ -781,20 +831,6 @@
     <div class="lib-divider">Ďalšie hry</div>
     <div class="library library-sm">
 
-      <!-- Valorant (locked) -->
-      <div class="cover locked" data-status="soon">
-        <div class="cover-art valart">
-          <div class="cover-logo"><span class="val-logo">VALORANT</span></div>
-          <div class="soon-badge">ČOSKORO</div>
-        </div>
-        <div class="cover-foot"><span class="hrs">—</span>
-          <button class="notify-btn" data-game="valorant" onclick="toggleNotify(event,this)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 8a6 6 0 0 1 12 0c0 5.4 1.6 7.2 2 8H4c.4-.8 2-2.6 2-8"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg>
-            Upozorniť ma
-          </button>
-        </div>
-      </div>
-
       <!-- Fortnite (locked) -->
       <div class="cover locked" data-status="soon">
         <div class="cover-art fortart">
@@ -803,20 +839,6 @@
         </div>
         <div class="cover-foot"><span class="hrs">—</span>
           <button class="notify-btn" data-game="fortnite" onclick="toggleNotify(event,this)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 8a6 6 0 0 1 12 0c0 5.4 1.6 7.2 2 8H4c.4-.8 2-2.6 2-8"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg>
-            Upozorniť ma
-          </button>
-        </div>
-      </div>
-
-      <!-- Apex (locked) -->
-      <div class="cover locked" data-status="soon">
-        <div class="cover-art apexart">
-          <div class="cover-logo"><span class="apex-logo">APEX</span></div>
-          <div class="soon-badge">ČOSKORO</div>
-        </div>
-        <div class="cover-foot"><span class="hrs">—</span>
-          <button class="notify-btn" data-game="apex" onclick="toggleNotify(event,this)">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 8a6 6 0 0 1 12 0c0 5.4 1.6 7.2 2 8H4c.4-.8 2-2.6 2-8"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg>
             Upozorniť ma
           </button>
@@ -868,14 +890,14 @@
 
   <!-- CS2 hub -->
   <section id="cs2" class="view">
-    <div class="section-head"><button class="btn ghost sm" onclick="go('hub')">◂ Hub</button><h2>CS2 <span style="color:var(--acc)">·</span> Training</h2><span class="sub">// vyber mód</span></div>
+    <div class="section-head"><button class="btn ghost sm" onclick="go('hub')">◂ Hub</button><h2><span id="trainGameName">CS2</span> <span style="color:var(--acc)">·</span> Training</h2><span class="sub">// vyber mód</span></div>
     <div class="panel-box" id="modePicker">
-      <h3>Vyber mód</h3><p class="hint">4 tréningové scenáre. Klikni na kartu.</p>
+      <h3>Vyber mód</h3><p class="hint" id="trainSub">4 tréningové scenáre. Klikni na kartu.</p>
       <div class="mode-grid">
         <div class="mode" tabindex="0" role="button" onclick="startMode('flick')"><h4>Aim Trainer</h4><span>Klasické klikanie na terče. Meria presnosť a skóre.</span><span class="go">SPUSTIŤ ▸</span></div>
         <div class="mode" tabindex="0" role="button" onclick="startMode('reaction')"><h4>Reaction Time</h4><span>Počkaj na zelenú a klikni čo najrýchlejšie. 5 pokusov.</span><span class="go">SPUSTIŤ ▸</span></div>
-        <div class="mode" id="modeStrafeCard" tabindex="0" role="button" onclick="startMode('strafe')"><h4>Counter-Strafe</h4><span>Si gulička čo strieľa guličky — výstrel ide len po counter-strafe. Nastavenia meníš naživo priamo v hre.</span><span class="go">SPUSTIŤ ▸</span></div>
-        <div class="mode" tabindex="0" role="button" onclick="startMode('doors')"><h4>Dust2 Doors Peek</h4><span>Terč blikne v medzere po otvorení dverí. Zasiahni ho včas.</span><span class="go">SPUSTIŤ ▸</span></div>
+        <div class="mode cs-only" id="modeStrafeCard" tabindex="0" role="button" onclick="startMode('strafe')"><h4>Counter-Strafe</h4><span>Si gulička čo strieľa guličky — výstrel ide len po counter-strafe. Nastavenia meníš naživo priamo v hre.</span><span class="go">SPUSTIŤ ▸</span></div>
+        <div class="mode cs-only" tabindex="0" role="button" onclick="startMode('doors')"><h4>Dust2 Doors Peek</h4><span>Terč blikne v medzere po otvorení dverí. Zasiahni ho včas.</span><span class="go">SPUSTIŤ ▸</span></div>
       </div>
     </div>
 
@@ -1004,6 +1026,8 @@ document.addEventListener('keydown',e=>{
 });
 
 /* ---------- navigation ---------- */
+let trainGame='CS2';
+function openTraining(game){trainGame=game;go('cs2');}
 function go(id){
   stopMode();
   if(sf)stopSensFinder();
@@ -1015,7 +1039,11 @@ function go(id){
   if(id==='hub')renderHub();
   if(id==='cs2'){const mp=document.getElementById('modePicker');if(mp)mp.style.display='block';
     const ss=document.getElementById('strafeSetup');if(ss)ss.style.display='none';
-    const aw=document.getElementById('arenaWrap');if(aw)aw.style.display='none';}
+    const aw=document.getElementById('arenaWrap');if(aw)aw.style.display='none';
+    const gn=document.getElementById('trainGameName');if(gn)gn.textContent=trainGame;
+    const isCs2=trainGame==='CS2';
+    document.querySelectorAll('.mode.cs-only').forEach(el=>el.style.display=isCs2?'':'none');
+    const ts=document.getElementById('trainSub');if(ts)ts.textContent=isCs2?'4 tréningové scenáre. Klikni na kartu.':'2 tréningové scenáre. Klikni na kartu.';}
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
@@ -1079,7 +1107,10 @@ function renderHub(){
   set('stCs',stats.bestCs!=null?stats.bestCs:'—');
   set('stHits',stats.totalHits||0);
   const hrs=(stats.playSec||0)/3600;
-  set('hrsCs2',hrs.toFixed(1)+' hodín');
+  const gameHrs=g=>((stats.playSecByGame&&stats.playSecByGame[g])||0)/3600;
+  set('hrsCs2',gameHrs('CS2').toFixed(1)+' hodín');
+  set('hrsVal',gameHrs('Valorant').toFixed(1)+' hodín');
+  set('hrsApex',gameHrs('Apex').toFixed(1)+' hodín');
   set('stTime',hrs.toFixed(1)+'h');
   set('stRank',rankFor(stats.bestAcc));
   const ringFill=document.getElementById('ringFill');
@@ -1136,19 +1167,23 @@ function rankFor(acc){
   if(acc>=35)return 'GOLD';
   return 'SILVER';
 }
-function resetStats(){const p=stats.playSec||0;stats={bestAcc:null,bestRt:null,bestCs:null,totalHits:0,playSec:p};saveState();renderHub();}
+function resetStats(){const p=stats.playSec||0,pg=stats.playSecByGame;stats={bestAcc:null,bestRt:null,bestCs:null,totalHits:0,playSec:p,playSecByGame:pg};saveState();renderHub();}
 function recordAcc(a){if(stats.bestAcc==null||a>stats.bestAcc){stats.bestAcc=a;saveState();}}
 function recordRt(t){if(stats.bestRt==null||t<stats.bestRt){stats.bestRt=t;saveState();}}
 function recordCs(s){if(stats.bestCs==null||s>stats.bestCs){stats.bestCs=s;saveState();}}
 function addHits(n){stats.totalHits=(stats.totalHits||0)+n;saveState();}
-function addPlaytime(sec){stats.playSec=(stats.playSec||0)+sec;saveState();}
+function addPlaytime(sec,game){
+  stats.playSec=(stats.playSec||0)+sec;
+  if(game){stats.playSecByGame=stats.playSecByGame||{};stats.playSecByGame[game]=(stats.playSecByGame[game]||0)+sec;}
+  saveState();
+}
 
 /* ---------- arena engine ---------- */
 const arena=()=>document.getElementById('arena');
 let raf=null, timers=[], mode=null;
 function clearArena(){if(!arena())return;arena().innerHTML='';timers.forEach(clearInterval);timers.forEach(clearTimeout);timers=[];if(raf)cancelAnimationFrame(raf);raf=null;arena().onmousedown=null;document.onkeydown=null;document.onkeyup=null;}
-function stopMode(){if(playStart){addPlaytime(Math.round((Date.now()-playStart)/1000));playStart=0;}const w=document.getElementById('arenaWrap');if(w)w.style.display='none';const c=document.getElementById('csConfig');if(c)c.style.display='none';const l=document.getElementById('csLayout');if(l)l.style.gridTemplateColumns='1fr';clearArena();mode=null;}
-let playStart=0;
+function stopMode(){if(playStart){addPlaytime(Math.round((Date.now()-playStart)/1000),playGame);playStart=0;}const w=document.getElementById('arenaWrap');if(w)w.style.display='none';const c=document.getElementById('csConfig');if(c)c.style.display='none';const l=document.getElementById('csLayout');if(l)l.style.gridTemplateColumns='1fr';clearArena();mode=null;}
+let playStart=0, playGame='CS2';
 function setStats(k1,v1,k2,v2,k3,v3){
   document.getElementById('s1k').textContent=k1;document.getElementById('s1').textContent=v1;
   document.getElementById('s2k').textContent=k2;document.getElementById('s2').textContent=v2;
@@ -1196,7 +1231,7 @@ function liveApply(){
   mirrorConfig(true); // keep both slider panels in sync; loop reads config live, no restart
 }
 function startMode(m){
-  mode=m;clearArena();playStart=Date.now();
+  mode=m;clearArena();playStart=Date.now();playGame=trainGame;
   document.getElementById('modePicker').style.display='none';
   document.getElementById('strafeSetup').style.display='none';
   document.getElementById('arenaWrap').style.display='block';
