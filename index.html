@@ -275,7 +275,7 @@
   .overlay{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;padding:24px;
     background:rgba(6,6,7,.9)}
   .overlay.active{display:flex}
-  .auth{width:100%;max-width:440px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:38px 34px;animation:fade .4s ease}
+  .auth{width:100%;max-width:440px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:38px 34px;animation:fade .4s ease;position:relative;overflow:hidden}
   .auth .brand{font-family:'Space Grotesk';font-weight:600;font-size:22px;letter-spacing:.02em;display:flex;align-items:center;gap:9px;justify-content:center;margin-bottom:6px}
   .auth .brand .dot{width:9px;height:9px;background:var(--acc);border-radius:2px}
   .auth .tag{text-align:center;color:var(--muted);font-size:12px;letter-spacing:.06em;margin-bottom:28px}
@@ -295,9 +295,11 @@
   .guest:hover{color:var(--ink);border-color:var(--muted)}
   .fineprint{text-align:center;color:var(--muted);font-size:10.5px;line-height:1.6;margin-top:20px}
   /* wizard steps */
-  .wiz-step{display:none} .wiz-step.active{display:block;animation:wizSlide .35s cubic-bezier(.16,1,.3,1)}
-  @keyframes wizSlide{from{opacity:0;transform:translateX(48px)}to{opacity:1;transform:translateX(0)}}
-  @media(prefers-reduced-motion:reduce){.wiz-step.active{animation:none}}
+  .wiz-step{display:none} .wiz-step.active{display:block;animation:wizEnter .4s cubic-bezier(.16,1,.3,1)}
+  .wiz-step.leaving{display:block;position:absolute;inset:38px 34px;animation:wizExit .3s ease forwards;pointer-events:none}
+  @keyframes wizEnter{from{opacity:0;transform:translateX(48px)}to{opacity:1;transform:translateX(0)}}
+  @keyframes wizExit{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(-48px)}}
+  @media(prefers-reduced-motion:reduce){.wiz-step.active{animation:none}.wiz-step.leaving{animation:none;display:none}}
   .wiz-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
   .wiz-head .who{display:flex;align-items:center;gap:10px;margin-left:auto}
   .wiz-head .who img,.wiz-head .who .pic{width:30px;height:30px;border-radius:50%;background:var(--acc);display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk';font-weight:600;color:#0a0a0b;font-size:14px}
@@ -1415,8 +1417,18 @@ let onboardReferral=null;
 let pendingUser=null;   // user awaiting email verification
 function showOverlay(step){document.getElementById('overlay').classList.add('active');wizGo(step);}
 function hideOverlay(){document.getElementById('overlay').classList.remove('active');}
-function wizGo(n){document.querySelectorAll('.wiz-step').forEach(s=>s.classList.remove('active'));
-  const el=document.getElementById('wiz'+n);if(el)el.classList.add('active');if(n===3)obCalc();}
+function wizGo(n){
+  const next=document.getElementById('wiz'+n);if(!next)return;
+  const cur=document.querySelector('.wiz-step.active');
+  if(cur&&cur!==next){
+    cur.classList.remove('active');
+    cur.classList.add('leaving');
+    setTimeout(()=>cur.classList.remove('leaving'),300);
+  }
+  document.querySelectorAll('.wiz-step').forEach(s=>{if(s!==cur)s.classList.remove('active');});
+  next.classList.add('active');
+  if(n===3)obCalc();
+}
 function authTab(which){
   document.getElementById('tabLogin').classList.toggle('active',which==='login');
   document.getElementById('tabReg').classList.toggle('active',which==='register');
