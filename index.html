@@ -3,7 +3,41 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DEADZONE — Aim Trainer</title>
+<title>DEADZONE — Bezplatný online Aim Trainer pre CS2, Valorant a Apex</title>
+<meta name="description" content="DEADZONE je bezplatný online aim trainer priamo v prehliadači. Prepočítaj citlivosť (cm/360°, eDPI) pre CS2, Valorant a Apex Legends, trénuj presnosť, reakciu a counter-strafe — bez inštalácie, bez platieb.">
+<meta name="keywords" content="aim trainer, online aim trainer, CS2 aim trainer, Valorant sens finder, sensitivity converter, cm/360, eDPI, counter-strafe training, reaction time trainer, FPS tréning, DEADZONE">
+<meta name="robots" content="index, follow">
+<meta name="author" content="DEADZONE">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="DEADZONE">
+<meta property="og:title" content="DEADZONE — Bezplatný online Aim Trainer pre CS2, Valorant a Apex">
+<meta property="og:description" content="Prepočítaj citlivosť a trénuj presnosť, reakciu a counter-strafe priamo v prehliadači. Zadarmo, bez inštalácie.">
+<meta property="og:image" content="assets/hero-operator.png">
+<meta property="og:locale" content="sk_SK">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="DEADZONE — Bezplatný online Aim Trainer">
+<meta name="twitter:description" content="Bezplatný FPS aim trainer pre CS2, Valorant a Apex Legends. Prepočet citlivosti, tréning presnosti a reakcie priamo v prehliadači.">
+<meta name="twitter:image" content="assets/hero-operator.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "DEADZONE",
+  "alternateName": "DEADZONE Aim Trainer",
+  "description": "Bezplatný online aim trainer pre CS2, Valorant a Apex Legends. Prepočet citlivosti (cm/360°, eDPI), tréning presnosti, reakcie a counter-strafe priamo v prehliadači, bez inštalácie.",
+  "applicationCategory": "GameApplication",
+  "operatingSystem": "Any (web browser)",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
+  "inLanguage": "sk",
+  "featureList": [
+    "Prepočet citlivosti (cm/360°, eDPI) naprieč hrami",
+    "Aim tréning",
+    "Reaction time tréning",
+    "Counter-strafe tréning",
+    "Podpora CS2, Valorant a Apex Legends"
+  ]
+}
+</script>
 <style>
   :root{
     --bg:#f5f5f3; --panel:#ffffff; --panel-2:#f0f0ee; --line:#e2e2de;
@@ -182,6 +216,22 @@
   .section-head{display:flex;align-items:baseline;gap:14px;margin-bottom:26px;flex-wrap:wrap}
   .section-head h2{font-size:26px}
   .section-head .sub{color:var(--muted);font-size:13px}
+  .compare-scroll{margin-top:64px;padding-top:10px;perspective:1400px}
+  .compare-card{max-width:900px;margin:0 auto;border:1px solid #2a2a2d;border-radius:24px;background:#161618;
+    padding:5px;box-shadow:0 30px 60px rgba(0,0,0,.28),0 10px 24px rgba(0,0,0,.18);
+    transform:rotateX(var(--cc-rot,16deg)) scale(var(--cc-scale,.94));transform-origin:top center;will-change:transform}
+  .compare-card-inner{border-radius:20px;background:linear-gradient(160deg,#1b1b1e,#141416);padding:clamp(18px,3.2vw,34px);overflow:hidden}
+  .compare-row{display:grid;grid-template-columns:1.1fr 1.4fr 1.6fr;gap:14px;padding:14px 6px;border-top:1px solid rgba(255,255,255,.08);
+    align-items:center;font-size:13.5px;color:#c8c8cc}
+  .compare-row:first-child{border-top:none}
+  .compare-row-head{color:#fff;font-family:'Space Grotesk',sans-serif;font-weight:700;letter-spacing:.02em;font-size:14px}
+  .compare-row span:first-child{color:#8b8b90;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:12.5px;letter-spacing:.04em;text-transform:uppercase}
+  .compare-row .ok{color:#5fd499}
+  .compare-row .no{color:#8b8b90}
+  @media(max-width:700px){.compare-row{grid-template-columns:1fr;gap:2px;padding:14px 4px}
+    .compare-row span:first-child{margin-bottom:2px}
+    .compare-row-head span:not(:first-child){display:none}}
+  @media (prefers-reduced-motion: reduce){.compare-card{transform:none}}
   .games{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
   .game{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:26px 22px;cursor:pointer;transition:.18s;overflow:hidden}
   .game:hover:not(.locked){transform:translateY(-3px);border-color:#37373b}
@@ -635,6 +685,23 @@
         <span>CS2</span><span class="dot">●</span>
         <span>VALORANT</span><span class="dot">●</span>
         <span>APEX LEGENDS</span><span class="dot">●</span>
+      </div>
+    </div>
+
+    <div class="compare-scroll" id="compareScroll">
+      <div class="section-head" style="justify-content:center;text-align:center">
+        <h2>Prečo DEADZONE namiesto iných aim trainerov?</h2>
+        <span class="sub">// porovnanie na prvý pohľad</span>
+      </div>
+      <div class="compare-card" id="compareCard">
+        <div class="compare-card-inner">
+          <div class="compare-row compare-row-head"><span></span><span>DEADZONE</span><span>Iné aim trainery</span></div>
+          <div class="compare-row"><span>Cena</span><span class="ok">✓ Zadarmo navždy</span><span class="no">✕ Free verzia obmedzená / predplatné</span></div>
+          <div class="compare-row"><span>Prístup</span><span class="ok">✓ Priamo v prehliadači</span><span class="no">✕ Nutná inštalácia cez Steam</span></div>
+          <div class="compare-row"><span>Prepočet citlivosti</span><span class="ok">✓ Automaticky pre CS2, Valorant, Apex</span><span class="no">✕ Chýba alebo ručný výpočet</span></div>
+          <div class="compare-row"><span>Jazyk</span><span class="ok">✓ Slovenčina</span><span class="no">✕ Väčšinou len angličtina</span></div>
+          <div class="compare-row"><span>Reálne scenáre</span><span class="ok">✓ Counter-strafe, Dust2 doors peek</span><span class="no">✕ Generické drily bez kontextu hry</span></div>
+        </div>
       </div>
     </div>
 
@@ -2148,6 +2215,24 @@ requestAnimationFrame(initHoverLift);
   document.addEventListener('mouseleave',()=>el.classList.remove('active'));
 })();
 
+/* comparison card tilts flat and scales up as it scrolls into view */
+(function(){
+  const card=document.getElementById('compareCard');
+  if(!card||reduceMotion())return;
+  let raf=null;
+  function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+  function update(){
+    const rect=card.getBoundingClientRect();
+    const progress=clamp((innerHeight-rect.top)/(innerHeight*0.9+rect.height*0.4),0,1);
+    card.style.setProperty('--cc-rot',(16*(1-progress))+'deg');
+    card.style.setProperty('--cc-scale',(0.94+0.06*progress).toFixed(3));
+    raf=null;
+  }
+  function onScroll(){ if(!raf)raf=requestAnimationFrame(update); }
+  window.addEventListener('scroll',onScroll,{passive:true});
+  window.addEventListener('resize',onScroll);
+  update();
+})();
 
 </script>
 </body>
