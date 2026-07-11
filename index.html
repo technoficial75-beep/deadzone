@@ -75,31 +75,20 @@
   .hero-stage h1.hero-word{position:relative;z-index:1;margin:0;width:max-content;max-width:92vw;
     font-family:'Space Grotesk',sans-serif;font-weight:800;
     font-size:clamp(48px,8.6vw,128px);line-height:.84;letter-spacing:-.01em;
-    background:linear-gradient(95deg,var(--ink) 0%,var(--ink) 28%,var(--acc-2) 60%,var(--acc) 100%);
+    background:linear-gradient(95deg,var(--ink) 0%,var(--ink) 72%,var(--acc) 100%);
     -webkit-background-clip:text;background-clip:text;color:transparent;
-    filter:drop-shadow(0 0 34px rgba(214,67,15,.22))}
+    filter:drop-shadow(0 0 34px rgba(214,67,15,.16))}
   .hero-tagline{position:relative;z-index:3;max-width:500px;margin:18px 0 0;color:var(--muted);
     font-size:14.5px;line-height:1.7}
 
-  /* HUD corner brackets + floating tags */
-  .hud-corner{position:absolute;z-index:2;width:26px;height:26px;border:2px solid rgba(0,0,0,.22);pointer-events:none}
-  .hud-tl{top:82px;left:22px;border-right:none;border-bottom:none}
-  .hud-tr{top:82px;right:22px;border-left:none;border-bottom:none}
-  .hud-bl{bottom:22px;left:22px;border-right:none;border-top:none}
-  .hud-br{bottom:22px;right:22px;border-left:none;border-top:none}
-  .hud-tag{position:absolute;z-index:3;display:flex;align-items:center;gap:7px;padding:7px 13px;border-radius:20px;
-    background:rgba(255,255,255,.7);border:1px solid rgba(0,0,0,.1);backdrop-filter:blur(8px);
-    box-shadow:0 2px 10px rgba(0,0,0,.04);
-    font-family:'Space Grotesk',sans-serif;font-size:11px;letter-spacing:.08em;color:var(--muted)}
-  .hud-tag b{color:var(--ink)}
-  .hud-tag-a{top:64px;left:clamp(20px,5vw,64px)}
-  .hud-tag-b{top:64px;right:clamp(20px,5vw,64px)}
+  /* soft fade from the hero into the page below */
+  .hero-fade{position:absolute;z-index:2;left:0;right:0;bottom:0;height:160px;pointer-events:none;
+    background:linear-gradient(180deg,transparent,var(--bg) 92%)}
+
   .live-dot{width:6px;height:6px;border-radius:50%;background:var(--good);animation:blink 1.6s ease-in-out infinite}
   @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
   @media (prefers-reduced-motion: reduce){.live-dot{animation:none}}
-  @media(max-width:700px){.hud-tag-a,.hud-tag-b{position:static;margin:0 auto 10px;width:max-content}
-    .hud-tag-b{margin-top:-4px}
-    .hero-layout{flex-direction:column;text-align:center}
+  @media(max-width:700px){.hero-layout{flex-direction:column;text-align:center}
     .hero-copy{text-align:center;max-width:none}
     .hero-cta{justify-content:center}
     .hero-tagline{margin-left:auto;margin-right:auto}}
@@ -592,13 +581,8 @@
       </div>
       <div class="hero-video-caption"><i class="live-dot"></i><b>Naživo</b>&nbsp;z tréningovej session</div>
       <div class="hero-scanline" aria-hidden="true"></div>
+      <div class="hero-fade" aria-hidden="true"></div>
       <div class="hero-stage">
-        <span class="hud-corner hud-tl" aria-hidden="true"></span>
-        <span class="hud-corner hud-tr" aria-hidden="true"></span>
-        <span class="hud-corner hud-bl" aria-hidden="true"></span>
-        <span class="hud-corner hud-br" aria-hidden="true"></span>
-        <div class="hud-tag hud-tag-a" aria-hidden="true"><i class="live-dot"></i>STATUS · ONLINE</div>
-        <div class="hud-tag hud-tag-b" aria-hidden="true">MÓD · CS2</div>
 
         <div class="hero-layout">
           <div class="hero-copy">
@@ -1164,15 +1148,12 @@ function playHeroEntrance(){
   if(!window.gsap)return;
   const stage=document.querySelector('.hero-stage');if(!stage)return;
   if(reduceMotion()){heroPlayed=true;return;}
-  const tags=document.querySelectorAll('.hud-tag'),corners=document.querySelectorAll('.hud-corner'),
-    eyebrow=document.querySelector('.eyebrow'),word=document.querySelector('.hero-word'),
+  const eyebrow=document.querySelector('.eyebrow'),word=document.querySelector('.hero-word'),
     kicker=document.querySelector('.hero-kicker'),tagline=document.querySelector('.hero-tagline'),
     cta=document.querySelectorAll('.hero-cta .btn'),bottombar=document.querySelector('.hero-bottombar');
-  gsap.set([tags,corners,eyebrow,word,kicker,tagline,cta,bottombar],{clearProps:'all'});
+  gsap.set([eyebrow,word,kicker,tagline,cta,bottombar],{clearProps:'all'});
   const tl=gsap.timeline({defaults:{ease:'power3.out'}});
-  tl.from(corners,{autoAlpha:0,scale:.6,duration:.5,stagger:.06},0)
-    .from(tags,{autoAlpha:0,y:-10,duration:.5,stagger:.1},.1)
-    .from(eyebrow,{autoAlpha:0,y:10,duration:.5},.15)
+  tl.from(eyebrow,{autoAlpha:0,y:10,duration:.5},.15)
     .from(word,{autoAlpha:0,y:26,scale:.97,duration:.7,ease:'power3.out'},.22)
     .from(kicker,{autoAlpha:0,y:14,duration:.5},.42)
     .from(tagline,{autoAlpha:0,y:12,duration:.5},.5)
