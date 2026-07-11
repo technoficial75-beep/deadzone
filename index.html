@@ -51,25 +51,50 @@
   .hero-bg::before{content:'';position:absolute;inset:0;opacity:.25;mix-blend-mode:multiply;
     background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E")}
   .hero-bg::after{content:'';position:absolute;inset:0;background:radial-gradient(1400px 900px at 50% 40%,transparent 45%,rgba(0,0,0,.05) 100%)}
-  .hero-stage{position:relative;z-index:1;flex:1;display:flex;flex-direction:column;align-items:center;
-    justify-content:center;text-align:center;padding:56px 20px 0;min-height:340px}
-  .hero-cta{position:relative;z-index:3;display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:22px}
+  .hero-stage{position:relative;z-index:1;flex:1;display:flex;flex-direction:column;
+    justify-content:center;padding:56px 20px 0;min-height:340px}
+  .hero-layout{position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;
+    gap:32px;width:100%;max-width:1180px;margin:0 auto}
+  .hero-copy{flex:1;min-width:0;max-width:620px;text-align:left}
+  .hero-cta{position:relative;z-index:3;display:flex;gap:12px;flex-wrap:wrap;justify-content:flex-start;margin-top:22px}
   .hero-stage .eyebrow{position:relative;z-index:3;color:var(--acc-2);letter-spacing:.14em;font-size:12px;
     text-transform:uppercase;font-weight:500;margin-bottom:10px}
   .hero-kicker{position:relative;z-index:3;margin:6px 0 0;font-family:'Space Grotesk',sans-serif;font-weight:700;
     font-size:clamp(18px,2.4vw,26px);letter-spacing:.02em;color:var(--ink)}
   .hero-kicker span{color:var(--acc-2)}
   .hero-stage h1.hero-word{position:relative;z-index:1;margin:0;font-family:'Special Gothic Condensed One',sans-serif;font-weight:400;
-    font-size:clamp(48px,13vw,200px);line-height:.86;letter-spacing:0;
+    font-size:clamp(44px,8vw,120px);line-height:.86;letter-spacing:0;
     background:linear-gradient(100deg,var(--ink) 0%,var(--ink) 30%,var(--acc-2) 62%,var(--acc) 85%,var(--pop) 100%);
     -webkit-background-clip:text;background-clip:text;color:transparent;
     filter:drop-shadow(0 0 30px rgba(214,67,15,.18))}
-  .hero-tagline{position:relative;z-index:3;max-width:440px;margin:16px auto 0;color:var(--muted);
+  .hero-tagline{position:relative;z-index:3;max-width:440px;margin:16px 0 0;color:var(--muted);
     font-size:13px;line-height:1.6}
 
-  /* HUD reticle backdrop */
+  /* red training-dummy mascot, built entirely from CSS shapes (no image) */
+  .hero-mascot{position:relative;z-index:1;flex:none;width:min(30vw,300px);height:min(30vw,340px);
+    display:flex;align-items:flex-end;justify-content:center}
+  .mascot-shadow{position:absolute;bottom:2%;left:50%;width:58%;height:16px;transform:translateX(-50%);
+    background:radial-gradient(ellipse,rgba(0,0,0,.16),transparent 72%)}
+  .mascot-body{position:absolute;bottom:6%;left:50%;width:52%;height:50%;transform:translateX(-50%);
+    background:linear-gradient(160deg,#ff7a52,var(--acc) 55%,#9c2e08 100%);
+    border-radius:46% 46% 40% 40%/52% 52% 42% 42%;
+    box-shadow:inset -14px -10px 22px rgba(0,0,0,.18),inset 10px 8px 16px rgba(255,255,255,.28)}
+  .mascot-arm{position:absolute;top:28%;width:13%;height:30%;border-radius:40%;
+    background:linear-gradient(160deg,#ff7a52,var(--acc) 60%,#9c2e08 100%)}
+  .mascot-arm-l{left:10%;transform:rotate(20deg)}
+  .mascot-arm-r{right:10%;transform:rotate(-20deg)}
+  .mascot-head{position:absolute;top:2%;left:50%;width:44%;aspect-ratio:1;transform:translateX(-50%);
+    border-radius:50%;background:radial-gradient(circle at 34% 30%,#ff9c78,var(--acc) 55%,#9c2e08 100%);
+    box-shadow:inset -10px -10px 18px rgba(0,0,0,.2),inset 8px 8px 14px rgba(255,255,255,.32),0 14px 22px rgba(0,0,0,.12)}
+  .mascot-visor{position:absolute;top:40%;left:50%;width:62%;height:18%;transform:translateX(-50%);
+    background:linear-gradient(90deg,#2a1208,#180a03);border-radius:40%;
+    box-shadow:inset 0 2px 5px rgba(0,0,0,.6)}
+  .mascot-visor::after{content:'';position:absolute;top:26%;left:14%;width:20%;height:36%;
+    background:rgba(255,255,255,.35);border-radius:50%;filter:blur(1.5px)}
+
+  /* HUD reticle backdrop, framed behind the mascot */
   .hero-reticle{position:absolute;z-index:0;top:50%;left:50%;transform:translate(-50%,-50%);
-    width:min(72vh,760px);height:min(72vh,760px);max-width:96vw;max-height:96vw;pointer-events:none;opacity:.5}
+    width:150%;height:150%;pointer-events:none;opacity:.6}
   .ret-ring{fill:none;stroke-width:.6;stroke:rgba(0,0,0,.18);transform-origin:100px 100px}
   .ret-ring-a{stroke:var(--acc-2);stroke-dasharray:2 6;animation:ret-spin 40s linear infinite}
   .ret-ring-b{stroke:var(--acc);stroke-dasharray:1 3;animation:ret-spin 30s linear infinite reverse}
@@ -96,7 +121,12 @@
   @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
   @media (prefers-reduced-motion: reduce){.live-dot{animation:none}}
   @media(max-width:700px){.hud-tag-a,.hud-tag-b{position:static;margin:0 auto 10px;width:max-content}
-    .hud-tag-b{margin-top:-4px}}
+    .hud-tag-b{margin-top:-4px}
+    .hero-layout{flex-direction:column;text-align:center}
+    .hero-copy{text-align:center;max-width:none}
+    .hero-cta{justify-content:center}
+    .hero-tagline{margin-left:auto;margin-right:auto}
+    .hero-mascot{width:150px;height:170px;order:-1;margin-bottom:8px}}
 
   /* scanline sweep */
   .hero-scanline{position:absolute;z-index:1;left:0;right:0;height:120px;pointer-events:none;
@@ -589,23 +619,33 @@
         <div class="hud-tag hud-tag-a" aria-hidden="true"><i class="live-dot"></i>STATUS · ONLINE</div>
         <div class="hud-tag hud-tag-b" aria-hidden="true">MÓD · CS2</div>
 
-        <svg class="hero-reticle" viewBox="0 0 200 200" aria-hidden="true">
-          <circle class="ret-ring ret-ring-a" cx="100" cy="100" r="92"/>
-          <circle class="ret-ring ret-ring-b" cx="100" cy="100" r="68"/>
-          <circle class="ret-dot" cx="100" cy="100" r="3.5"/>
-          <line class="ret-line" x1="100" y1="2" x2="100" y2="30"/>
-          <line class="ret-line" x1="100" y1="170" x2="100" y2="198"/>
-          <line class="ret-line" x1="2" y1="100" x2="30" y2="100"/>
-          <line class="ret-line" x1="170" y1="100" x2="198" y2="100"/>
-        </svg>
-
-        <div class="eyebrow">Online Aim Trainer</div>
-        <h1 class="hero-word">DEADZONE</h1>
-        <p class="hero-kicker">ZASIAHNI PRV<span>Ý</span>.</p>
-        <p class="hero-tagline">DEADZONE je tréningová platforma pre FPS hráčov. Nastav si profil, prepočítaj citlivosť z hry a sleduj svoje štatistiky v Hube.</p>
-        <div class="hero-cta">
-          <button class="btn primary sm" onclick="go('setup')">Nastaviť profil ▸</button>
-          <button class="btn ghost sm" onclick="go('cs2')">Rovno trénovať</button>
+        <div class="hero-layout">
+          <div class="hero-copy">
+            <div class="eyebrow">Online Aim Trainer</div>
+            <h1 class="hero-word">DEADZONE</h1>
+            <p class="hero-kicker">ZASIAHNI PRV<span>Ý</span>.</p>
+            <p class="hero-tagline">DEADZONE je tréningová platforma pre FPS hráčov. Nastav si profil, prepočítaj citlivosť z hry a sleduj svoje štatistiky v Hube.</p>
+            <div class="hero-cta">
+              <button class="btn primary sm" onclick="go('setup')">Nastaviť profil ▸</button>
+              <button class="btn ghost sm" onclick="go('cs2')">Rovno trénovať</button>
+            </div>
+          </div>
+          <div class="hero-mascot" aria-hidden="true">
+            <svg class="hero-reticle" viewBox="0 0 200 200">
+              <circle class="ret-ring ret-ring-a" cx="100" cy="100" r="92"/>
+              <circle class="ret-ring ret-ring-b" cx="100" cy="100" r="68"/>
+              <circle class="ret-dot" cx="100" cy="100" r="3.5"/>
+              <line class="ret-line" x1="100" y1="2" x2="100" y2="30"/>
+              <line class="ret-line" x1="100" y1="170" x2="100" y2="198"/>
+              <line class="ret-line" x1="2" y1="100" x2="30" y2="100"/>
+              <line class="ret-line" x1="170" y1="100" x2="198" y2="100"/>
+            </svg>
+            <div class="mascot-shadow"></div>
+            <div class="mascot-arm mascot-arm-l"></div>
+            <div class="mascot-arm mascot-arm-r"></div>
+            <div class="mascot-body"></div>
+            <div class="mascot-head"><div class="mascot-visor"></div></div>
+          </div>
         </div>
       </div>
       <div class="hero-bottombar">
@@ -1162,8 +1202,9 @@ function playHeroEntrance(){
   const tags=document.querySelectorAll('.hud-tag'),corners=document.querySelectorAll('.hud-corner'),
     eyebrow=document.querySelector('.eyebrow'),word=document.querySelector('.hero-word'),
     kicker=document.querySelector('.hero-kicker'),tagline=document.querySelector('.hero-tagline'),
-    cta=document.querySelectorAll('.hero-cta .btn'),bottombar=document.querySelector('.hero-bottombar');
-  gsap.set([tags,corners,eyebrow,word,kicker,tagline,cta,bottombar],{clearProps:'all'});
+    cta=document.querySelectorAll('.hero-cta .btn'),bottombar=document.querySelector('.hero-bottombar'),
+    mascot=document.querySelector('.hero-mascot');
+  gsap.set([tags,corners,eyebrow,word,kicker,tagline,cta,bottombar,mascot],{clearProps:'all'});
   const tl=gsap.timeline({defaults:{ease:'power3.out'}});
   tl.from(corners,{autoAlpha:0,scale:.6,duration:.5,stagger:.06},0)
     .from(tags,{autoAlpha:0,y:-10,duration:.5,stagger:.1},.1)
@@ -1172,7 +1213,8 @@ function playHeroEntrance(){
     .from(kicker,{autoAlpha:0,y:14,duration:.5},.42)
     .from(tagline,{autoAlpha:0,y:12,duration:.5},.5)
     .from(cta,{autoAlpha:0,y:14,duration:.45,stagger:.08},.58)
-    .from(bottombar,{autoAlpha:0,y:16,duration:.5},.66);
+    .from(bottombar,{autoAlpha:0,y:16,duration:.5},.66)
+    .from(mascot,{autoAlpha:0,x:36,scale:.88,duration:.8,ease:'power3.out'},.3);
   const hs=document.getElementById('hsCount');
   if(hs){hs.textContent='0';countTo('hsCount',4,{});}
   heroPlayed=true;
