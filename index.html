@@ -295,7 +295,9 @@
   .guest:hover{color:var(--ink);border-color:var(--muted)}
   .fineprint{text-align:center;color:var(--muted);font-size:10.5px;line-height:1.6;margin-top:20px}
   /* wizard steps */
-  .wiz-step{display:none} .wiz-step.active{display:block;animation:fade .3s ease}
+  .wiz-step{display:none} .wiz-step.active{display:block;animation:wizSlide .35s cubic-bezier(.16,1,.3,1)}
+  @keyframes wizSlide{from{opacity:0;transform:translateX(48px)}to{opacity:1;transform:translateX(0)}}
+  @media(prefers-reduced-motion:reduce){.wiz-step.active{animation:none}}
   .wiz-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
   .wiz-head .who{display:flex;align-items:center;gap:10px;margin-left:auto}
   .wiz-head .who img,.wiz-head .who .pic{width:30px;height:30px;border-radius:50%;background:var(--acc);display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk';font-weight:600;color:#0a0a0b;font-size:14px}
@@ -308,9 +310,11 @@
   .pick .opt.dis{opacity:.4;cursor:not-allowed}
   .pick .opt h4{font-size:16px;font-weight:600} .pick .opt small{color:var(--muted);font-size:11px;display:block;margin-top:3px}
   .pick .opt.sel::after{content:'✓';position:absolute;top:10px;right:12px;color:var(--acc);font-weight:700}
-  .dots{display:flex;gap:6px;justify-content:center;margin-top:22px}
-  .dots i{width:7px;height:7px;border-radius:50%;background:var(--line);transition:.2s}
-  .dots i.on{background:var(--acc);width:20px;border-radius:4px}
+  .wiz-steps{margin-top:22px}
+  .wiz-steps .lbl{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);letter-spacing:.04em;margin-bottom:7px}
+  .wiz-steps .lbl b{color:var(--ink);font-weight:600}
+  .wiz-steps .track{height:4px;background:var(--line);border-radius:4px;overflow:hidden}
+  .wiz-steps .track .fill{height:100%;background:linear-gradient(90deg,var(--acc),var(--pop));border-radius:4px;transition:width .3s ease}
   .userchip{display:flex;align-items:center;gap:8px;background:var(--panel-2);border:1px solid var(--line);border-radius:20px;padding:5px 12px 5px 6px;margin-left:8px}
   .userchip .pic{width:26px;height:26px;border-radius:50%;background:var(--acc);display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk';font-weight:600;color:#0a0a0b;font-size:12px}
   .userchip small{color:var(--ink);font-size:12px}
@@ -469,12 +473,29 @@
         <div class="opt dis"><h4>Fortnite</h4><small>čoskoro</small></div>
         <div class="opt dis"><h4>Apex</h4><small>čoskoro</small></div>
       </div>
-      <div class="dots"><i class="on"></i><i></i></div>
+      <div class="wiz-steps"><div class="lbl"><span>Krok <b>1</b> z 3</span><span>Hra</span></div><div class="track"><div class="fill" style="width:33%"></div></div></div>
       <button class="btn primary" style="width:100%;margin-top:18px" onclick="wizGo(2)">Pokračovať ▸</button>
     </div>
 
-    <!-- step 2: sens settings -->
+    <!-- step 2: referral source -->
     <div class="wiz-step" id="wiz2">
+      <div class="wiz-head"><div class="who"><span class="pic" id="obPic3">R</span><small id="obMail3">hráč</small></div></div>
+      <h3>Kde si sa o nás dozvedel?</h3>
+      <p class="sh">Pomôže nám to zlepšovať DEADZONE.</p>
+      <div class="pick">
+        <div class="opt" data-ref="youtube" tabindex="0" role="button" onclick="pickReferral(this,'youtube')"><h4>YouTube</h4><small>video / recenzia</small></div>
+        <div class="opt" data-ref="twitch" tabindex="0" role="button" onclick="pickReferral(this,'twitch')"><h4>Twitch</h4><small>stream</small></div>
+        <div class="opt" data-ref="friend" tabindex="0" role="button" onclick="pickReferral(this,'friend')"><h4>Kamarát</h4><small>odporúčanie</small></div>
+        <div class="opt" data-ref="reddit" tabindex="0" role="button" onclick="pickReferral(this,'reddit')"><h4>Reddit / Discord</h4><small>komunita</small></div>
+        <div class="opt" data-ref="google" tabindex="0" role="button" onclick="pickReferral(this,'google')"><h4>Google</h4><small>vyhľadávanie</small></div>
+        <div class="opt" data-ref="other" tabindex="0" role="button" onclick="pickReferral(this,'other')"><h4>Inde</h4><small>niečo iné</small></div>
+      </div>
+      <div class="wiz-steps"><div class="lbl"><span>Krok <b>2</b> z 3</span><span>Zdroj</span></div><div class="track"><div class="fill" style="width:66%"></div></div></div>
+      <button class="btn primary" style="width:100%;margin-top:18px" onclick="wizGo(3)">Pokračovať ▸</button>
+    </div>
+
+    <!-- step 3: sens settings -->
+    <div class="wiz-step" id="wiz3">
       <div class="wiz-head"><div class="who"><span class="pic" id="obPic2">R</span><small id="obMail2">hráč</small></div></div>
       <h3>Nastav citlivosť</h3>
       <p class="sh">3D hry počítajú v stupňoch, nie v pixeloch — prepočítame na cm/360°.</p>
@@ -483,7 +504,7 @@
         <div class="field"><label>DPI</label><input id="obDpi" type="number" step="50" value="800" oninput="obCalc()"></div>
       </div>
       <div class="sens-out"><div><span class="lab">cm / 360°</span></div><div><span class="val" id="obCm">—</span></div></div>
-      <div class="dots"><i></i><i class="on"></i></div>
+      <div class="wiz-steps"><div class="lbl"><span>Krok <b>3</b> z 3</span><span>Citlivosť</span></div><div class="track"><div class="fill" style="width:100%"></div></div></div>
       <button class="btn primary" style="width:100%;margin-top:18px" onclick="finishOnboarding()">Hotovo — spustiť ▸</button>
     </div>
 
@@ -1390,11 +1411,12 @@ function applySensFinderResult(){
 
 /* ---------- auth + onboarding ---------- */
 let onboardGame='CS2';
+let onboardReferral=null;
 let pendingUser=null;   // user awaiting email verification
 function showOverlay(step){document.getElementById('overlay').classList.add('active');wizGo(step);}
 function hideOverlay(){document.getElementById('overlay').classList.remove('active');}
 function wizGo(n){document.querySelectorAll('.wiz-step').forEach(s=>s.classList.remove('active'));
-  const el=document.getElementById('wiz'+n);if(el)el.classList.add('active');if(n===2)obCalc();}
+  const el=document.getElementById('wiz'+n);if(el)el.classList.add('active');if(n===3)obCalc();}
 function authTab(which){
   document.getElementById('tabLogin').classList.toggle('active',which==='login');
   document.getElementById('tabReg').classList.toggle('active',which==='register');
@@ -1457,8 +1479,8 @@ function doLogin(){
 }
 function guestSignIn(){
   profile={name:'HOSŤ',game:'CS2',cm:30,edpi:960,sens:1.2,dpi:800,email:null,google:false,onboarded:false,guest:true,userKey:null};
-  document.getElementById('obPic').textContent='H';document.getElementById('obPic2').textContent='H';
-  document.getElementById('obMail').textContent='hosť';document.getElementById('obMail2').textContent='hosť';
+  document.getElementById('obPic').textContent='H';document.getElementById('obPic2').textContent='H';document.getElementById('obPic3').textContent='H';
+  document.getElementById('obMail').textContent='hosť';document.getElementById('obMail2').textContent='hosť';document.getElementById('obMail3').textContent='hosť';
   wizGo(1);
 }
 /* begin a logged-in session; if user has no saved profile -> onboarding, else straight to hub */
@@ -1473,12 +1495,15 @@ function beginSession(key,isNew){
     stats=u.stats||{bestAcc:null,bestRt:null,bestCs:null,totalHits:0};
     document.getElementById('obPic').textContent=profile.name.charAt(0);
     document.getElementById('obPic2').textContent=profile.name.charAt(0);
+    document.getElementById('obPic3').textContent=profile.name.charAt(0);
     document.getElementById('obMail').textContent=u.email;
     document.getElementById('obMail2').textContent=u.email;
+    document.getElementById('obMail3').textContent=u.email;
     wizGo(1);
   }
 }
 function pickGame(el,g){document.querySelectorAll('#wiz1 .opt').forEach(o=>o.classList.remove('sel'));el.classList.add('sel');onboardGame=g;}
+function pickReferral(el,r){document.querySelectorAll('#wiz2 .opt').forEach(o=>o.classList.remove('sel'));el.classList.add('sel');onboardReferral=r;}
 function obCalc(){
   const s=parseFloat(document.getElementById('obSens').value)||0;
   const d=parseFloat(document.getElementById('obDpi').value)||0;
@@ -1490,6 +1515,7 @@ function obCalc(){
 function finishOnboarding(){
   obCalc();
   profile.game=onboardGame;
+  profile.referral=onboardReferral;
   profile.cm=profile._tmpCm||30;profile.edpi=profile._tmpEdpi||960;
   profile.sens=profile._tmpSens||1.2;profile.dpi=profile._tmpDpi||800;
   profile.onboarded=true;
