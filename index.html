@@ -342,16 +342,29 @@
   .kv b{font-family:'Space Grotesk';font-size:16px;font-weight:600;color:var(--ink)}
   .tips{background:var(--panel);border-color:var(--line)}
   .tips h3{margin-bottom:10px}
-  .lib-head{display:flex;align-items:baseline;gap:14px;margin-bottom:20px}
+  .lib-head{display:flex;align-items:baseline;gap:14px;margin-bottom:20px;flex-wrap:wrap}
   .lib-head h2{font-size:22px} .lib-head .sub{color:var(--muted);font-size:12px}
-  .library{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:20px}
+  .lib-tabs{display:flex;gap:2px;margin:0 0 20px;background:rgba(255,255,255,.03);border:1px solid var(--line);
+    border-radius:999px;padding:4px;width:max-content}
+  .lib-tab{font-family:inherit;background:transparent;border:none;color:var(--muted);padding:7px 16px;
+    border-radius:999px;cursor:pointer;font-size:12.5px;letter-spacing:.02em;transition:.2s}
+  .lib-tab:hover{color:var(--ink)}
+  .lib-tab.active{color:#fff;background:linear-gradient(135deg,var(--acc),var(--pop))}
+  .library{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;align-items:start}
+  @media(max-width:900px){.library{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:560px){.library{grid-template-columns:1fr}.cover-featured{grid-column:span 1 !important}}
 
   .cover{border-radius:14px;overflow:hidden;cursor:pointer;background:var(--panel);border:1px solid var(--line);
     transition:.2s;box-shadow:0 4px 14px rgba(0,0,0,.3)}
   .cover.live:hover{transform:translateY(-4px);border-color:#3a3a3e;box-shadow:0 10px 24px rgba(0,0,0,.4)}
-  .cover.locked{opacity:.55;cursor:not-allowed}
+  .cover.locked{opacity:.7;cursor:default}
+  .cover-featured{grid-column:span 2}
+  .cover-featured .cover-art{aspect-ratio:auto;min-height:260px}
   .cover-art{position:relative;aspect-ratio:3/4;overflow:hidden;display:flex;align-items:flex-start;justify-content:flex-start}
   .cover-fav{position:absolute;top:10px;right:12px;color:#e8b23f;font-size:18px;filter:drop-shadow(0 1px 3px rgba(0,0,0,.6));z-index:3}
+  .cover-live-badge{position:absolute;top:12px;right:12px;z-index:3;display:flex;align-items:center;gap:6px;
+    background:rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 11px 5px 9px;
+    font-family:'Space Grotesk';font-weight:600;font-size:11px;letter-spacing:.06em;color:#fff}
   .cover-logo{position:absolute;top:16px;left:14px;z-index:2;display:flex;flex-direction:column;line-height:.98}
   .soon-badge{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
     background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.15);color:var(--ink);font-family:'Space Grotesk';font-weight:600;
@@ -360,6 +373,12 @@
   .cover-foot .hrs{color:var(--muted);font-size:12px}
   .cover-foot .play{color:var(--acc);font-family:'Space Grotesk';font-weight:600;font-size:13px}
   .cover-foot .play.dim{color:var(--muted)}
+  .notify-btn{display:flex;align-items:center;gap:5px;background:transparent;border:1px solid var(--line);
+    color:var(--muted);font-family:inherit;font-size:11px;letter-spacing:.02em;padding:5px 10px;border-radius:20px;
+    cursor:pointer;transition:.15s}
+  .notify-btn svg{width:12px;height:12px;flex:none}
+  .notify-btn:hover{color:var(--ink);border-color:var(--muted)}
+  .notify-btn.on{color:var(--acc-2);border-color:var(--acc-2);background:rgba(34,211,238,.08)}
 
   /* CS2 cover art */
   .cs2art{background:linear-gradient(160deg,#3a3a3d 0%,#1c1c1e 60%,#0f0f10 100%)}
@@ -687,10 +706,25 @@
     </div>
 
     <div class="lib-head"><h2>Obľúbené hry</h2><span class="sub">// klikni pre tréningy</span></div>
+    <div class="lib-tabs">
+      <button class="lib-tab active" data-filter="all" onclick="filterLibrary('all',this)">Všetky</button>
+      <button class="lib-tab" data-filter="live" onclick="filterLibrary('live',this)">Live</button>
+      <button class="lib-tab" data-filter="soon" onclick="filterLibrary('soon',this)">Čoskoro</button>
+    </div>
     <div class="library">
 
+      <!-- CS2 (featured) -->
+      <div class="cover live cover-featured" data-status="live" tabindex="0" role="button" onclick="go('cs2')">
+        <div class="cover-art cs2art">
+          <div class="cover-live-badge"><i class="live-dot"></i>LIVE</div>
+          <div class="cover-logo"><span class="cs-counter">COUNTER</span><span class="cs-strike">STRIKE <span class="cs-2">2</span></span></div>
+          <div class="cover-soldier"></div>
+        </div>
+        <div class="cover-foot"><span class="hrs" id="hrsCs2">0.0 hodín</span><span class="play">HRAŤ ▸</span></div>
+      </div>
+
       <!-- Sens Finder -->
-      <div class="cover live" tabindex="0" role="button" onclick="go('sensfinder')">
+      <div class="cover live" data-status="live" tabindex="0" role="button" onclick="go('sensfinder')">
         <div class="cover-art sfart">
           <div class="cover-fav" style="color:var(--acc-2)">◎</div>
           <div class="cover-logo"><span class="sf-logo">SENS</span><span class="sf-logo2">FINDER</span></div>
@@ -699,41 +733,46 @@
         <div class="cover-foot"><span class="hrs">nástroj</span><span class="play">NÁJSŤ ▸</span></div>
       </div>
 
-      <!-- CS2 -->
-      <div class="cover live" tabindex="0" role="button" onclick="go('cs2')">
-        <div class="cover-art cs2art">
-          <div class="cover-fav">★</div>
-          <div class="cover-logo"><span class="cs-counter">COUNTER</span><span class="cs-strike">STRIKE <span class="cs-2">2</span></span></div>
-          <div class="cover-soldier"></div>
-        </div>
-        <div class="cover-foot"><span class="hrs" id="hrsCs2">0.0 hodín</span><span class="play">HRAŤ ▸</span></div>
-      </div>
-
       <!-- Valorant (locked) -->
-      <div class="cover locked">
+      <div class="cover locked" data-status="soon">
         <div class="cover-art valart">
           <div class="cover-logo"><span class="val-logo">VALORANT</span></div>
           <div class="soon-badge">ČOSKORO</div>
         </div>
-        <div class="cover-foot"><span class="hrs">—</span><span class="play dim">zamknuté</span></div>
+        <div class="cover-foot"><span class="hrs">—</span>
+          <button class="notify-btn" data-game="valorant" onclick="toggleNotify(event,this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 8a6 6 0 0 1 12 0c0 5.4 1.6 7.2 2 8H4c.4-.8 2-2.6 2-8"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg>
+            Upozorniť ma
+          </button>
+        </div>
       </div>
 
       <!-- Fortnite (locked) -->
-      <div class="cover locked">
+      <div class="cover locked" data-status="soon">
         <div class="cover-art fortart">
           <div class="cover-logo"><span class="fort-logo">FORTNITE</span></div>
           <div class="soon-badge">ČOSKORO</div>
         </div>
-        <div class="cover-foot"><span class="hrs">—</span><span class="play dim">zamknuté</span></div>
+        <div class="cover-foot"><span class="hrs">—</span>
+          <button class="notify-btn" data-game="fortnite" onclick="toggleNotify(event,this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 8a6 6 0 0 1 12 0c0 5.4 1.6 7.2 2 8H4c.4-.8 2-2.6 2-8"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg>
+            Upozorniť ma
+          </button>
+        </div>
       </div>
 
       <!-- Apex (locked) -->
-      <div class="cover locked">
+      <div class="cover locked" data-status="soon">
         <div class="cover-art apexart">
           <div class="cover-logo"><span class="apex-logo">APEX</span></div>
           <div class="soon-badge">ČOSKORO</div>
         </div>
-        <div class="cover-foot"><span class="hrs">—</span><span class="play dim">zamknuté</span></div>
+        <div class="cover-foot"><span class="hrs">—</span>
+          <button class="notify-btn" data-game="apex" onclick="toggleNotify(event,this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 8a6 6 0 0 1 12 0c0 5.4 1.6 7.2 2 8H4c.4-.8 2-2.6 2-8"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg>
+            Upozorniť ma
+          </button>
+        </div>
       </div>
 
     </div>
@@ -1007,6 +1046,32 @@ function renderHub(){
   set('tipText',tips[(new Date().getDate())%tips.length]);
   const chip=document.getElementById('chipPic');if(chip)chip.textContent=(profile.name||'R').charAt(0);
   if(document.getElementById('fmSens'))findSens();
+  initNotifyButtons();
+}
+function filterLibrary(cat,btn){
+  document.querySelectorAll('.lib-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.library .cover').forEach(c=>{
+    c.style.display=(cat==='all'||c.dataset.status===cat)?'':'none';
+  });
+}
+function notifyList(){try{return JSON.parse(store.get('dz_notify')||'[]')}catch(e){return []}}
+function toggleNotify(e,btn){
+  e.stopPropagation();
+  const game=btn.dataset.game;
+  let list=notifyList();
+  const on=list.includes(game);
+  list=on?list.filter(g=>g!==game):[...list,game];
+  store.set('dz_notify',JSON.stringify(list));
+  setNotifyBtn(btn,!on);
+}
+function setNotifyBtn(btn,on){
+  btn.classList.toggle('on',on);
+  btn.lastChild.textContent=on?' Upozorním ťa':' Upozorniť ma';
+}
+function initNotifyButtons(){
+  const list=notifyList();
+  document.querySelectorAll('.notify-btn').forEach(btn=>setNotifyBtn(btn,list.includes(btn.dataset.game)));
 }
 function rankFor(acc){
   if(acc==null)return '—';
