@@ -6,10 +6,10 @@
 <title>DEADZONE — Aim Trainer</title>
 <style>
   :root{
-    --bg:#0a0a12; --panel:#151527; --panel-2:#0e0e1c; --line:#28284a;
-    --ink:#f2f1f9; --muted:#9490b5; --acc:#8b5cf6; --acc-2:#22d3ee;
-    --pop:#ec4899; --gold:#fbbf24;
-    --good:#34d399; --bad:#f43f5e; --grid:#171733;
+    --bg:#0a0a0c; --panel:#141417; --panel-2:#0e0e10; --line:#242429;
+    --ink:#f3f3f5; --muted:#8b8b93; --acc:#ff4d1c; --acc-2:#00d9ff;
+    --pop:#ffb020; --gold:#ffb020;
+    --good:#34d399; --bad:#ff3355; --grid:#151517;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{height:100%}
@@ -29,7 +29,7 @@
   .pill{font-family:inherit;background:transparent;border:none;color:var(--muted);padding:8px 18px;
     border-radius:999px;cursor:pointer;font-size:13px;letter-spacing:.02em;transition:.2s;white-space:nowrap}
   .pill:hover{color:var(--ink)}
-  .pill.active{color:#fff;background:linear-gradient(135deg,var(--acc),var(--pop));box-shadow:0 4px 16px rgba(139,92,246,.4)}
+  .pill.active{color:#fff;background:linear-gradient(135deg,var(--acc),var(--pop));box-shadow:0 4px 16px rgba(255,77,28,.4)}
   .header-actions{display:flex;align-items:center;gap:10px;margin-left:auto}
   @media(max-width:900px){.nav-pills{display:none}}
   main{max-width:1100px;margin:0 auto;padding:40px 26px 80px}
@@ -41,10 +41,10 @@
     width:100vw;margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw);margin-top:-101px;
     min-height:max(640px,calc(100vh - 64px));border-radius:0;overflow:hidden}
   .hero-bg{position:absolute;inset:0;z-index:0;background:
-    radial-gradient(1100px 700px at 50% 90%, rgba(139,92,246,.5), transparent 62%),
-    radial-gradient(800px 550px at 10% 6%, rgba(34,211,238,.25), transparent 60%),
-    radial-gradient(800px 550px at 90% 6%, rgba(236,72,153,.35), transparent 60%),
-    linear-gradient(180deg,#120c1f 0%,#0c0816 50%,#09060f 100%)}
+    radial-gradient(1100px 700px at 50% 90%, rgba(255,77,28,.5), transparent 62%),
+    radial-gradient(800px 550px at 10% 6%, rgba(0,217,255,.25), transparent 60%),
+    radial-gradient(800px 550px at 90% 6%, rgba(255,176,32,.35), transparent 60%),
+    linear-gradient(180deg,#160e08 0%,#0e0906 50%,#0a0705 100%)}
   .hero-bg::before{content:'';position:absolute;inset:0;opacity:.5;mix-blend-mode:overlay;
     background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E")}
   .hero-bg::after{content:'';position:absolute;inset:0;background:radial-gradient(1400px 900px at 50% 40%,transparent 40%,rgba(0,0,0,.55) 100%)}
@@ -60,7 +60,7 @@
     font-size:clamp(48px,13vw,200px);line-height:.86;letter-spacing:0;
     background:linear-gradient(100deg,#fff 0%,#fff 30%,var(--acc-2) 62%,var(--acc) 85%,var(--pop) 100%);
     -webkit-background-clip:text;background-clip:text;color:transparent;
-    filter:drop-shadow(0 0 46px rgba(139,92,246,.35))}
+    filter:drop-shadow(0 0 46px rgba(255,77,28,.35))}
   .hero-tagline{position:relative;z-index:3;max-width:440px;margin:16px auto 0;color:rgba(255,255,255,.68);
     font-size:13px;line-height:1.6}
 
@@ -96,7 +96,7 @@
 
   /* scanline sweep */
   .hero-scanline{position:absolute;z-index:1;left:0;right:0;height:120px;pointer-events:none;
-    background:linear-gradient(180deg,transparent,rgba(34,211,238,.06) 45%,rgba(34,211,238,.12) 50%,rgba(34,211,238,.06) 55%,transparent);
+    background:linear-gradient(180deg,transparent,rgba(0,217,255,.06) 45%,rgba(0,217,255,.12) 50%,rgba(0,217,255,.06) 55%,transparent);
     animation:scan 7s linear infinite}
   @keyframes scan{0%{top:-10%}100%{top:105%}}
   @media (prefers-reduced-motion: reduce){.hero-scanline{display:none}}
@@ -113,7 +113,7 @@
   .hq:hover{background:var(--acc);border-color:var(--acc);color:#0a0a0b}
   .btn{font-family:inherit;cursor:pointer;border-radius:8px;padding:12px 22px;font-size:13.5px;font-weight:500;letter-spacing:0;transition:.15s;border:1px solid var(--line)}
   .btn.primary{background:var(--acc);color:#0a0a0b;border-color:var(--acc);font-weight:600}
-  .btn.primary:hover{background:#a78bfa;transform:translateY(-1px)}
+  .btn.primary:hover{background:#ff7a4d;transform:translateY(-1px)}
   .btn.ghost{background:transparent;color:var(--ink)}
   .btn.ghost:hover{border-color:var(--muted);background:var(--panel)}
   .btn.sm{padding:8px 15px;font-size:12px}
@@ -164,9 +164,9 @@
   .cta-band{position:relative;width:100vw;margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw);
     margin-top:64px;overflow:hidden;padding:64px 26px;text-align:center;
     background:
-      radial-gradient(900px 400px at 15% 20%, rgba(139,92,246,.35), transparent 60%),
-      radial-gradient(900px 400px at 85% 80%, rgba(34,211,238,.22), transparent 60%),
-      radial-gradient(700px 400px at 90% 10%, rgba(236,72,153,.25), transparent 60%),
+      radial-gradient(900px 400px at 15% 20%, rgba(255,77,28,.35), transparent 60%),
+      radial-gradient(900px 400px at 85% 80%, rgba(0,217,255,.22), transparent 60%),
+      radial-gradient(700px 400px at 90% 10%, rgba(255,176,32,.25), transparent 60%),
       var(--panel-2)}
   .cta-band-inner{position:relative;max-width:560px;margin:0 auto}
   .cta-band h2{font-size:clamp(26px,4vw,38px);margin-bottom:12px}
@@ -241,7 +241,7 @@
   .switch input{opacity:0;width:0;height:0}
   .slider{position:absolute;inset:0;background:var(--panel-2);border:1px solid var(--line);border-radius:20px;cursor:pointer;transition:.2s}
   .slider::before{content:'';position:absolute;height:15px;width:15px;left:3px;top:3px;background:var(--muted);border-radius:50%;transition:.2s}
-  .switch input:checked+.slider{background:rgba(139,92,246,.25);border-color:var(--acc)}
+  .switch input:checked+.slider{background:rgba(255,77,28,.25);border-color:var(--acc)}
   .switch input:checked+.slider::before{transform:translateX(19px);background:var(--acc)}
 
   .arena-top{display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap}
@@ -256,7 +256,7 @@
       radial-gradient(900px 400px at 50% 40%,#111113,#08090a);
     border:1px solid var(--line);border-radius:14px;overflow:hidden;cursor:crosshair;user-select:none}
   .target{position:absolute;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ff9772,var(--acc));
-    box-shadow:0 0 12px rgba(139,92,246,.4),inset 0 0 10px rgba(0,0,0,.35);transform:translate(-50%,-50%)}
+    box-shadow:0 0 12px rgba(255,77,28,.4),inset 0 0 10px rgba(0,0,0,.35);transform:translate(-50%,-50%)}
   .enemy{position:absolute;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ff8393,#c2384a);
     box-shadow:0 0 10px rgba(194,56,74,.45);transform:translate(-50%,-50%)}
   .bullet{position:absolute;width:7px;height:7px;border-radius:50%;background:#fff;box-shadow:0 0 6px #fff;transform:translate(-50%,-50%);pointer-events:none}
@@ -265,7 +265,7 @@
   .msg h2{font-size:32px;color:var(--ink);font-weight:500} .msg p{color:var(--muted);margin-top:10px;font-size:14px;max-width:420px}
   .msg .big{font-size:62px;font-family:'Space Grotesk',sans-serif;color:var(--acc);font-weight:600}
   #reactionBox{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;transition:background .05s}
-  .player-ball{position:absolute;border-radius:50%;background:radial-gradient(circle at 35% 30%,#8fe6da,var(--acc-2));box-shadow:0 0 14px rgba(34,211,238,.5);transform:translate(-50%,-50%)}
+  .player-ball{position:absolute;border-radius:50%;background:radial-gradient(circle at 35% 30%,#8fe6da,var(--acc-2));box-shadow:0 0 14px rgba(0,217,255,.5);transform:translate(-50%,-50%)}
   .cs-hint{position:absolute;top:14px;left:50%;transform:translateX(-50%);color:var(--muted);font-size:12px;letter-spacing:.01em;text-align:center;width:92%}
   .cs-state{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);font-family:'Space Grotesk';font-size:14px;letter-spacing:.03em;padding:6px 18px;border-radius:20px;border:1px solid var(--line);background:var(--panel);font-weight:500}
   .cs-state.ready{color:var(--good);border-color:var(--good)}
@@ -308,7 +308,7 @@
   .pick{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:8px}
   .pick .opt{background:var(--panel-2);border:1px solid var(--line);border-radius:11px;padding:16px 14px;cursor:pointer;transition:.15s;position:relative}
   .pick .opt:hover{border-color:var(--muted);transform:translateY(-1px)}
-  .pick .opt.sel{border-color:var(--acc);background:rgba(139,92,246,.08)}
+  .pick .opt.sel{border-color:var(--acc);background:rgba(255,77,28,.08)}
   .pick .opt.dis{opacity:.4;cursor:not-allowed}
   .pick .opt h4{font-size:16px;font-weight:600} .pick .opt small{color:var(--muted);font-size:11px;display:block;margin-top:3px}
   .pick .opt.sel::after{content:'✓';position:absolute;top:10px;right:12px;color:var(--acc);font-weight:700}
@@ -326,6 +326,13 @@
   /* hub top + library */
   .hub-top{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:20px}
   .hub-actions{margin-left:auto;display:flex;gap:8px}
+  .rating-ring{position:relative;width:88px;height:88px;flex:none;margin:0 auto}
+  .rating-ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+  .ring-track{fill:none;stroke:var(--line);stroke-width:8}
+  .ring-fill{fill:none;stroke-width:8;stroke-linecap:round;stroke-dasharray:326.7;stroke-dashoffset:326.7;transition:stroke-dashoffset .8s cubic-bezier(.16,1,.3,1)}
+  .ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .ring-center b{font-family:'Space Grotesk';font-size:21px;font-weight:700;color:#fff;line-height:1}
+  .ring-center span{font-size:8px;color:var(--muted);letter-spacing:.06em;margin-top:4px}
   .mini-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:36px}
   .mini{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
   .mini .k{display:block;color:var(--muted);font-size:10.5px;letter-spacing:.04em;text-transform:uppercase}
@@ -382,7 +389,7 @@
     cursor:pointer;transition:.15s;width:100%}
   .notify-btn svg{width:10px;height:10px;flex:none}
   .notify-btn:hover{color:var(--ink);border-color:var(--muted)}
-  .notify-btn.on{color:var(--acc-2);border-color:var(--acc-2);background:rgba(34,211,238,.08)}
+  .notify-btn.on{color:var(--acc-2);border-color:var(--acc-2);background:rgba(0,217,255,.08)}
 
   .lib-add{width:148px;flex:none;aspect-ratio:3/4;border:1.5px dashed var(--line);border-radius:12px;
     display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer;
@@ -407,7 +414,7 @@
   .valart{background:linear-gradient(160deg,#c8455a,#231e26)}
   .sfart{background:radial-gradient(circle at 50% 42%,#1a2f30,#0c1414 70%);position:relative}
   .sfart::before{content:'';position:absolute;inset:0;background:
-    repeating-radial-gradient(circle at 50% 42%,transparent 0 24px,rgba(34,211,238,.08) 24px 25px)}
+    repeating-radial-gradient(circle at 50% 42%,transparent 0 24px,rgba(0,217,255,.08) 24px 25px)}
   .sf-logo{font-family:'Space Grotesk';font-weight:600;font-size:15px;color:#fff;letter-spacing:.01em}
   .sf-logo2{font-family:'Space Grotesk';font-weight:600;font-size:15px;color:var(--acc-2);letter-spacing:.01em;margin-top:-3px}
   .sf-reticle{position:absolute;top:42%;left:50%;width:60px;height:60px;transform:translate(-50%,-50%);
@@ -700,6 +707,19 @@
       <div class="profile">
         <div class="avatar" id="hubAv">R</div>
         <div><h3 id="hubName" style="margin:0">ROOKIE</h3><span class="hint" id="hubGame" style="margin:0">CS2 · 30.0 cm/360°</span></div>
+      </div>
+      <div class="rating-ring">
+        <svg viewBox="0 0 120 120">
+          <defs>
+            <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#ff4d1c"/>
+              <stop offset="100%" stop-color="#ffb020"/>
+            </linearGradient>
+          </defs>
+          <circle class="ring-track" cx="60" cy="60" r="52"/>
+          <circle class="ring-fill" id="ringFill" cx="60" cy="60" r="52" stroke="url(#ringGrad)"/>
+        </svg>
+        <div class="ring-center"><b id="ringScore">—</b><span id="ringTier">SKILL RATING</span></div>
       </div>
       <div class="hub-actions">
         <button class="btn ghost sm" onclick="go('setup')">Nastavenia</button>
@@ -1045,6 +1065,13 @@ function renderHub(){
   set('hrsCs2',hrs.toFixed(1)+' hodín');
   set('stTime',hrs.toFixed(1)+'h');
   set('stRank',rankFor(stats.bestAcc));
+  const ringFill=document.getElementById('ringFill');
+  if(ringFill){
+    const pct=stats.bestAcc!=null?stats.bestAcc:0,circ=326.7;
+    ringFill.style.strokeDashoffset=circ-(circ*Math.min(100,pct)/100);
+    set('ringScore',stats.bestAcc!=null?stats.bestAcc:'—');
+    set('ringTier',stats.bestAcc!=null?rankFor(stats.bestAcc):'BEZ RATINGU');
+  }
   // setup card
   set('setGame',profile.game);
   set('setSens',Number(profile.sens||0).toFixed(2));
