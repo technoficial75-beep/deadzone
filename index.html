@@ -342,51 +342,53 @@
   .kv b{font-family:'Space Grotesk';font-size:16px;font-weight:600;color:var(--ink)}
   .tips{background:var(--panel);border-color:var(--line)}
   .tips h3{margin-bottom:10px}
-  .lib-head{display:flex;align-items:baseline;gap:14px;margin-bottom:20px;flex-wrap:wrap}
+  .lib-head{display:flex;align-items:baseline;gap:14px;margin-bottom:16px;flex-wrap:wrap}
   .lib-head h2{font-size:22px} .lib-head .sub{color:var(--muted);font-size:12px}
-  .lib-tabs{display:flex;gap:2px;margin:0 0 20px;background:rgba(255,255,255,.03);border:1px solid var(--line);
-    border-radius:999px;padding:4px;width:max-content}
-  .lib-tab{font-family:inherit;background:transparent;border:none;color:var(--muted);padding:7px 16px;
-    border-radius:999px;cursor:pointer;font-size:12.5px;letter-spacing:.02em;transition:.2s}
-  .lib-tab:hover{color:var(--ink)}
-  .lib-tab.active{color:#fff;background:linear-gradient(135deg,var(--acc),var(--pop))}
-  .library{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;align-items:start}
-  @media(max-width:900px){.library{grid-template-columns:repeat(2,1fr)}}
-  @media(max-width:560px){.library{grid-template-columns:1fr}.cover-featured{grid-column:span 1 !important}}
+  .lib-divider{display:flex;align-items:center;gap:12px;margin:26px 0 16px;color:var(--muted);
+    font-size:11.5px;letter-spacing:.06em;text-transform:uppercase}
+  .lib-divider::before,.lib-divider::after{content:'';flex:1;height:1px;background:var(--line)}
+  .library{display:flex;flex-wrap:wrap;gap:14px}
 
-  .cover{border-radius:14px;overflow:hidden;cursor:pointer;background:var(--panel);border:1px solid var(--line);
+  .cover{width:148px;flex:none;border-radius:12px;overflow:hidden;cursor:pointer;background:var(--panel);border:1px solid var(--line);
     transition:.2s;box-shadow:0 4px 14px rgba(0,0,0,.3)}
   .cover.live:hover{transform:translateY(-4px);border-color:#3a3a3e;box-shadow:0 10px 24px rgba(0,0,0,.4)}
   .cover.locked{opacity:.7;cursor:default}
-  .cover-featured{grid-column:span 2}
-  .cover-featured .cover-art{aspect-ratio:auto;min-height:260px}
   .cover-art{position:relative;aspect-ratio:3/4;overflow:hidden;display:flex;align-items:flex-start;justify-content:flex-start}
-  .cover-fav{position:absolute;top:10px;right:12px;color:#e8b23f;font-size:18px;filter:drop-shadow(0 1px 3px rgba(0,0,0,.6));z-index:3}
-  .cover-live-badge{position:absolute;top:12px;right:12px;z-index:3;display:flex;align-items:center;gap:6px;
-    background:rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 11px 5px 9px;
-    font-family:'Space Grotesk';font-weight:600;font-size:11px;letter-spacing:.06em;color:#fff}
-  .cover-logo{position:absolute;top:16px;left:14px;z-index:2;display:flex;flex-direction:column;line-height:.98}
+  .cover-fav{position:absolute;top:8px;right:9px;color:#e8b23f;font-size:14px;filter:drop-shadow(0 1px 3px rgba(0,0,0,.6));z-index:3}
+  .cover-live-badge{position:absolute;top:8px;right:8px;z-index:3;display:flex;align-items:center;gap:4px;
+    background:rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:3px 8px 3px 6px;
+    font-family:'Space Grotesk';font-weight:600;font-size:9px;letter-spacing:.05em;color:#fff}
+  .cover-live-badge .live-dot{width:5px;height:5px}
+  .cover-logo{position:absolute;top:10px;left:10px;z-index:2;display:flex;flex-direction:column;line-height:.98}
   .soon-badge{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
     background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.15);color:var(--ink);font-family:'Space Grotesk';font-weight:600;
-    letter-spacing:.06em;font-size:13px;padding:8px 16px;border-radius:8px;z-index:3}
-  .cover-foot{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;background:var(--panel-2);border-top:1px solid var(--line)}
-  .cover-foot .hrs{color:var(--muted);font-size:12px}
-  .cover-foot .play{color:var(--acc);font-family:'Space Grotesk';font-weight:600;font-size:13px}
+    letter-spacing:.04em;font-size:10px;padding:5px 10px;border-radius:7px;z-index:3;white-space:nowrap}
+  .cover-foot{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:8px 9px;background:var(--panel-2);border-top:1px solid var(--line)}
+  .cover.locked .cover-foot{flex-direction:column;align-items:stretch}
+  .cover-foot .hrs{color:var(--muted);font-size:10px}
+  .cover-foot .play{color:var(--acc);font-family:'Space Grotesk';font-weight:600;font-size:11px}
   .cover-foot .play.dim{color:var(--muted)}
-  .notify-btn{display:flex;align-items:center;gap:5px;background:transparent;border:1px solid var(--line);
-    color:var(--muted);font-family:inherit;font-size:11px;letter-spacing:.02em;padding:5px 10px;border-radius:20px;
-    cursor:pointer;transition:.15s}
-  .notify-btn svg{width:12px;height:12px;flex:none}
+  .notify-btn{display:flex;align-items:center;justify-content:center;gap:4px;background:transparent;border:1px solid var(--line);
+    color:var(--muted);font-family:inherit;font-size:9.5px;letter-spacing:.01em;padding:5px 6px;border-radius:20px;
+    cursor:pointer;transition:.15s;width:100%}
+  .notify-btn svg{width:10px;height:10px;flex:none}
   .notify-btn:hover{color:var(--ink);border-color:var(--muted)}
   .notify-btn.on{color:var(--acc-2);border-color:var(--acc-2);background:rgba(34,211,238,.08)}
+
+  .lib-add{width:148px;flex:none;aspect-ratio:3/4;border:1.5px dashed var(--line);border-radius:12px;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer;
+    color:var(--muted);transition:.15s;background:rgba(255,255,255,.02)}
+  .lib-add:hover{border-color:var(--muted);color:var(--ink);background:rgba(255,255,255,.04)}
+  .lib-add .plus{font-family:'Space Grotesk';font-weight:300;font-size:26px;line-height:1}
+  .lib-add span{font-size:11px;text-align:center;padding:0 10px}
 
   /* CS2 cover art */
   .cs2art{background:linear-gradient(160deg,#3a3a3d 0%,#1c1c1e 60%,#0f0f10 100%)}
   .cs2art::before{content:'';position:absolute;inset:0;background:
     repeating-linear-gradient(115deg,rgba(255,255,255,.04) 0 2px,transparent 2px 26px)}
-  .cs-counter{font-family:'Space Grotesk';font-weight:600;font-size:20px;letter-spacing:.02em;color:#fff}
-  .cs-strike{font-family:'Space Grotesk';font-weight:600;font-size:20px;letter-spacing:.02em;color:#fff;margin-top:-4px}
-  .cs-2{font-family:'Space Grotesk';font-weight:700;font-size:20px;color:var(--acc)}
+  .cs-counter{font-family:'Space Grotesk';font-weight:600;font-size:14px;letter-spacing:.01em;color:#fff}
+  .cs-strike{font-family:'Space Grotesk';font-weight:600;font-size:14px;letter-spacing:.01em;color:#fff;margin-top:-2px}
+  .cs-2{font-family:'Space Grotesk';font-weight:700;font-size:14px;color:var(--acc)}
   .cover-soldier{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:74%;height:66%;
     background:radial-gradient(ellipse at 50% 30%,#2a2a2d 0%,#151517 60%,transparent 72%);
     clip-path:polygon(30% 0,70% 0,82% 40%,78% 100%,22% 100%,18% 40%);opacity:.9}
@@ -397,15 +399,15 @@
   .sfart{background:radial-gradient(circle at 50% 42%,#1a2f30,#0c1414 70%);position:relative}
   .sfart::before{content:'';position:absolute;inset:0;background:
     repeating-radial-gradient(circle at 50% 42%,transparent 0 24px,rgba(34,211,238,.08) 24px 25px)}
-  .sf-logo{font-family:'Space Grotesk';font-weight:600;font-size:22px;color:#fff;letter-spacing:.02em}
-  .sf-logo2{font-family:'Space Grotesk';font-weight:600;font-size:22px;color:var(--acc-2);letter-spacing:.02em;margin-top:-6px}
-  .sf-reticle{position:absolute;top:42%;left:50%;width:96px;height:96px;transform:translate(-50%,-50%);
+  .sf-logo{font-family:'Space Grotesk';font-weight:600;font-size:15px;color:#fff;letter-spacing:.01em}
+  .sf-logo2{font-family:'Space Grotesk';font-weight:600;font-size:15px;color:var(--acc-2);letter-spacing:.01em;margin-top:-3px}
+  .sf-reticle{position:absolute;top:42%;left:50%;width:60px;height:60px;transform:translate(-50%,-50%);
     border:2px solid var(--acc-2);border-radius:50%;opacity:.8}
   .sf-reticle::before,.sf-reticle::after{content:'';position:absolute;background:var(--acc)}
-  .sf-reticle::before{left:50%;top:-14px;width:2px;height:124px;transform:translateX(-50%);opacity:.4}
-  .sf-reticle::after{top:50%;left:-14px;height:2px;width:124px;transform:translateY(-50%);opacity:.4}  .fortart{background:linear-gradient(160deg,#4a5fbf,#221e33)}
+  .sf-reticle::before{left:50%;top:-9px;width:2px;height:78px;transform:translateX(-50%);opacity:.4}
+  .sf-reticle::after{top:50%;left:-9px;height:2px;width:78px;transform:translateY(-50%);opacity:.4}  .fortart{background:linear-gradient(160deg,#4a5fbf,#221e33)}
   .apexart{background:linear-gradient(160deg,#a8353f,#1a1a1a)}
-  .val-logo,.fort-logo,.apex-logo{font-family:'Space Grotesk';font-weight:600;color:#fff;letter-spacing:.02em;font-size:17px;text-shadow:0 2px 6px rgba(0,0,0,.5)}
+  .val-logo,.fort-logo,.apex-logo{font-family:'Space Grotesk';font-weight:600;color:#fff;letter-spacing:.01em;font-size:12.5px;text-shadow:0 2px 6px rgba(0,0,0,.5)}
 
   [role="button"]{outline-offset:2px}
   [role="button"]:focus-visible{outline:2px solid var(--acc-2)}
@@ -706,15 +708,10 @@
     </div>
 
     <div class="lib-head"><h2>Obľúbené hry</h2><span class="sub">// klikni pre tréningy</span></div>
-    <div class="lib-tabs">
-      <button class="lib-tab active" data-filter="all" onclick="filterLibrary('all',this)">Všetky</button>
-      <button class="lib-tab" data-filter="live" onclick="filterLibrary('live',this)">Live</button>
-      <button class="lib-tab" data-filter="soon" onclick="filterLibrary('soon',this)">Čoskoro</button>
-    </div>
     <div class="library">
 
-      <!-- CS2 (featured) -->
-      <div class="cover live cover-featured" data-status="live" tabindex="0" role="button" onclick="go('cs2')">
+      <!-- CS2 -->
+      <div class="cover live" data-status="live" tabindex="0" role="button" onclick="go('cs2')">
         <div class="cover-art cs2art">
           <div class="cover-live-badge"><i class="live-dot"></i>LIVE</div>
           <div class="cover-logo"><span class="cs-counter">COUNTER</span><span class="cs-strike">STRIKE <span class="cs-2">2</span></span></div>
@@ -732,6 +729,17 @@
         </div>
         <div class="cover-foot"><span class="hrs">nástroj</span><span class="play">NÁJSŤ ▸</span></div>
       </div>
+
+      <!-- Add game placeholder -->
+      <div class="lib-add" tabindex="0" role="button" title="Pridávanie vlastných hier čoskoro">
+        <span class="plus">+</span>
+        <span>Pridať hru</span>
+      </div>
+
+    </div>
+
+    <div class="lib-divider">Ďalšie hry</div>
+    <div class="library">
 
       <!-- Valorant (locked) -->
       <div class="cover locked" data-status="soon">
@@ -1047,13 +1055,6 @@ function renderHub(){
   const chip=document.getElementById('chipPic');if(chip)chip.textContent=(profile.name||'R').charAt(0);
   if(document.getElementById('fmSens'))findSens();
   initNotifyButtons();
-}
-function filterLibrary(cat,btn){
-  document.querySelectorAll('.lib-tab').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  document.querySelectorAll('.library .cover').forEach(c=>{
-    c.style.display=(cat==='all'||c.dataset.status===cat)?'':'none';
-  });
 }
 function notifyList(){try{return JSON.parse(store.get('dz_notify')||'[]')}catch(e){return []}}
 function toggleNotify(e,btn){
