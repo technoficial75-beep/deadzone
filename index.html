@@ -444,6 +444,13 @@
       linear-gradient(90deg,var(--grid) 1px,transparent 1px) 0 0/40px 40px,
       radial-gradient(900px 400px at 50% 40%,#111113,#08090a);
     border:1px solid var(--line);border-radius:14px;overflow:hidden;cursor:crosshair;user-select:none}
+  .sf-arena.locked{cursor:none}
+  /* fixed crosshair shown while the pointer is locked (view rotates around it) */
+  .sf-arena.locked::after{content:'';position:absolute;left:50%;top:50%;width:18px;height:18px;
+    transform:translate(-50%,-50%);border:1.5px solid rgba(255,255,255,.85);border-radius:50%;
+    box-shadow:0 0 0 1px rgba(0,0,0,.4);pointer-events:none;z-index:5}
+  .sf-arena.locked::before{content:'';position:absolute;left:50%;top:50%;width:2px;height:2px;
+    transform:translate(-50%,-50%);background:#fff;border-radius:50%;pointer-events:none;z-index:6}
   .sf-bias{display:flex;align-items:center;gap:14px;margin-top:14px;color:var(--muted);font-size:12px}
   .sf-bias-track{flex:1;height:6px;background:var(--panel-2);border:1px solid var(--line);border-radius:6px;position:relative}
   .sf-bias-mid{position:absolute;left:50%;top:-4px;width:1px;height:14px;background:var(--line)}
@@ -826,9 +833,9 @@
         <p class="hint">Prevod citlivosti medzi hrami. 3D hry počítajú v stupňoch na 360°, nie v pixeloch — tu zistíš koľko cm potiahneš myšou na plnú otočku a ako to prepočítať do inej hry.</p>
         <div class="row">
           <div class="field"><label>Z hry</label>
-            <select id="fmFrom" onchange="findSens()"><option value="1">CS2 / CS:GO</option><option value="0.318">Valorant</option><option value="1">Apex / Source</option><option value="0.5">Overwatch 2</option></select></div>
+            <select id="fmFrom" onchange="findSens()"><option value="0.022">CS2 / CS:GO</option><option value="0.0692">Valorant</option><option value="0.022">Apex / Source</option><option value="0.0066">Overwatch 2</option></select></div>
           <div class="field"><label>Do hry</label>
-            <select id="fmTo" onchange="findSens()"><option value="0.318">Valorant</option><option value="1">CS2 / CS:GO</option><option value="1">Apex / Source</option><option value="0.5">Overwatch 2</option></select></div>
+            <select id="fmTo" onchange="findSens()"><option value="0.0692">Valorant</option><option value="0.022">CS2 / CS:GO</option><option value="0.022">Apex / Source</option><option value="0.0066">Overwatch 2</option></select></div>
         </div>
         <div class="row">
           <div class="field"><label>Tvoja sens (z hry)</label><input id="fmSens" type="number" step="0.01" value="1.20" oninput="findSens()"></div>
@@ -930,7 +937,7 @@
 
     <div class="panel-box" id="sfIntro">
       <h3>Ako to funguje</h3>
-      <p class="hint" style="margin-bottom:18px">Flickneš na terč a klikneš. Nástroj meria, či <b style="color:var(--bad)">prestreľuješ (overflick)</b> alebo <b style="color:var(--acc-2)">nedoletíš (underflick)</b>, a po každom flicku ti jemne upraví citlivosť — stále bližšie k tvojmu optimu. Terče striedajú veľkosti (malé aj veľké), aby test sedel na rôzne situácie. Vychádza z princípu Aimlabs Sens Finder / PSA.</p>
+      <p class="hint" style="margin-bottom:18px">Klikneš do arény a <b>myš sa uzamkne</b> (Pointer Lock) — odvtedy tvoj reálny pohyb myšou otáča pohľad presne cez <b>sens × 0.022°/count</b> (yaw CS2), rovnako ako v hre. Flickneš na terč a klikneš. Ak <b style="color:var(--bad)">prestreľuješ (overflick)</b>, sens je privysoká a nástroj ju zníži; ak <b style="color:var(--acc-2)">nedoletíš (underflick)</b>, zvýši ju. Keďže sens naozaj mení pohyb pohľadu, číslo sa zbieha k tvojmu optimu. Na konci dostaneš odporúčané cm/360°. Ak prehliadač Pointer Lock nepovolí, prepne sa na približný kurzorový režim.</p>
       <div class="row">
         <div class="field"><label>Štartovacia sens (CS2)</label><input id="sfStartSens" type="number" step="0.01" value="1.20"></div>
         <div class="field"><label>DPI</label><input id="sfStartDpi" type="number" step="50" value="800"></div>
@@ -950,6 +957,7 @@
             <button class="btn ghost exit sm" onclick="stopSensFinder()">✕ Ukončiť</button>
           </div>
           <div id="sfArena" class="sf-arena"></div>
+          <p class="hint" id="sfHint" style="margin:10px 0 0;font-size:11.5px;text-align:center">Klikni do arény pre uzamknutie myši · potom flickni na terč a klikni</p>
           <div class="sf-bias"><span>← nedoletíš (nižšia)</span><div class="sf-bias-track"><div class="sf-bias-dot" id="sfBiasDot"></div><div class="sf-bias-mid"></div></div><span>prestreľuješ (vyššia) →</span></div>
         </div>
         <div class="cs-config" style="position:sticky;top:76px">
@@ -1021,19 +1029,20 @@ function calcSens(){
 let SENS_FACTOR=1;
 
 /* ---------- Find my sens (cross-game converter) ----------
-   Each game's dropdown value is its yaw multiplier relative to CS2's 0.022 deg/count.
-   CS2/Source = 1.0 (0.022), Valorant ~0.318 of CS2's degrees-per-sens, OW2 ~0.5.
-   Converting keeps cm/360 constant: targetSens = fromSens * (fromFactor / toFactor). */
+   Each game's dropdown value is its yaw: degrees the view turns per mouse count at
+   in-game sens 1.0.  CS2/CS:GO/Source/Apex = 0.022, Valorant ≈ 0.0692, Overwatch 2 ≈ 0.0066.
+   cm/360 is the real-world distance for a full turn and stays constant across games,
+   so to keep the same feel:  targetSens = fromSens * (yawFrom / yawTo).
+   Check: CS2 1.2 -> Valorant = 1.2 * (0.022/0.0692) = 0.381  (Val ≈ CS x 0.318). */
 function findSens(){
-  const fF=parseFloat(document.getElementById('fmFrom').value)||1;
-  const tF=parseFloat(document.getElementById('fmTo').value)||1;
+  const yawFrom=parseFloat(document.getElementById('fmFrom').value)||0.022;
+  const yawTo=parseFloat(document.getElementById('fmTo').value)||0.022;
   const s=parseFloat(document.getElementById('fmSens').value)||0;
   const d=parseFloat(document.getElementById('fmDpi').value)||0;
   if(s<=0||d<=0){document.getElementById('fmOutSens').textContent='—';document.getElementById('fmOutCm').textContent='—';return;}
-  const target=s*(fF/tF);
-  // cm/360 uses the "from" game as CS2-equivalent: effective CS2 sens = s * fF
-  const csEquiv=s*fF;
-  const cm=(360/(csEquiv*0.022)/d)*2.54;
+  const target=s*(yawFrom/yawTo);
+  // physical cm/360 of the source setup — invariant, so it's also the target's cm/360
+  const cm=(360/(s*yawFrom)/d)*2.54;
   document.getElementById('fmOutSens').textContent=target.toFixed(3);
   document.getElementById('fmOutCm').textContent=cm.toFixed(1)+' cm';
   window._foundSens={sens:s,dpi:d,cm};
@@ -1407,70 +1416,146 @@ function modeDoors(){
   timers.push(cap);
 }
 
-/* ---------- Sens Finder ---------- */
+/* ---------- Sens Finder (pointer-locked flick calibration) ----------
+   A flat page can't apply your in-game sens to the raw OS cursor, so a plain
+   cursor flick test can't actually measure sens. We use Pointer Lock: raw mouse
+   counts (movementX) rotate a virtual view by  sens * YAW deg/count (CS2 yaw 0.022),
+   exactly like an FPS. Targets sit at a world yaw; you flick to bring them onto the
+   fixed centre crosshair. If sens is too high the same hand-flick overshoots (the
+   ballistic peak passes the target); too low and it undershoots. We nudge sens toward
+   the value where flicks land, then report cm/360 = 360/(sens*YAW)/dpi*2.54.
+   The arena width maps to SF_FOV degrees of view, so px<->degrees is consistent.
+   If Pointer Lock is unavailable we fall back to an approximate cursor-path mode. */
+const SF_YAW=0.022, SF_FOV=40;
 let sf=null, sfTimers=[];
 function clearSfTimers(){sfTimers.forEach(clearTimeout);sfTimers=[];}
-function sfCmFromSens(sens){return (360/(sens*0.022)/sf.dpi)*2.54;}
+function sfCmFromSens(sens){return (360/(sens*SF_YAW)/sf.dpi)*2.54;}
 function startSensFinder(){
   const startSens=parseFloat(document.getElementById('sfStartSens').value)||1.2;
   const dpi=parseFloat(document.getElementById('sfStartDpi').value)||800;
   const total=parseInt(document.getElementById('sfRounds').value)||50;
-  sf={sens:startSens,dpi,total,round:0,over:0,under:0,perfect:0,errors:[],recent:[],path:[],done:null};
+  const A=document.getElementById('sfArena');
+  sf={sens:startSens,dpi,total,round:0,over:0,under:0,perfect:0,errors:[],recent:[],done:null,
+      locked:false,cursorMode:!(A&&A.requestPointerLock),lockTried:false,
+      view:0,view0:0,dir:1,dist:0,angR:1,progress:0,pxPerDeg:8,tgtSize:0,tgtTop:0,path:[]};
   document.getElementById('sfIntro').style.display='none';
   document.getElementById('sfArenaWrap').style.display='block';
-  document.addEventListener('mousemove',sfTrackMove);
+  document.addEventListener('pointerlockchange',sfLockChange);
+  document.addEventListener('pointerlockerror',sfLockErr);
+  document.addEventListener('mousemove',sfCursorMove);
+  sfSetHint();
   updateSfStats();
   spawnSfTarget();
   window.scrollTo({top:0,behavior:'smooth'});
 }
 function stopSensFinder(){
   clearSfTimers();
-  document.removeEventListener('mousemove',sfTrackMove);
+  document.removeEventListener('pointerlockchange',sfLockChange);
+  document.removeEventListener('pointerlockerror',sfLockErr);
+  document.removeEventListener('mousemove',sfCursorMove);
+  document.removeEventListener('mousemove',sfLockedMove);
+  if(document.pointerLockElement)document.exitPointerLock();
   const A=document.getElementById('sfArena');
-  if(A){A.innerHTML='';A.onmousedown=null;}
+  if(A){A.innerHTML='';A.onmousedown=null;A.classList.remove('locked');}
   sf=null;
   document.getElementById('sfArenaWrap').style.display='none';
   document.getElementById('sfIntro').style.display='block';
 }
-function sfTrackMove(e){if(!sf)return;sf.path.push({x:e.clientX,y:e.clientY});if(sf.path.length>60)sf.path.shift();}
+function sfSetHint(){
+  const h=document.getElementById('sfHint');if(!h)return;
+  if(!sf){h.textContent='';return;}
+  if(sf.cursorMode)h.textContent='Kurzorový režim (Pointer Lock nepovolený) · flickni na terč a klikni';
+  else if(sf.locked)h.textContent='Myš uzamknutá · flickni na terč a klikni · Esc = uvoľniť';
+  else h.textContent='Klikni do arény pre uzamknutie myši · potom flickni na terč a klikni';
+}
+function sfLockErr(){if(sf){sf.cursorMode=true;sfSetHint();}}
+function sfLockChange(){
+  if(!sf)return;
+  const A=document.getElementById('sfArena');
+  sf.locked=(document.pointerLockElement===A);
+  if(sf.locked){A.classList.add('locked');document.addEventListener('mousemove',sfLockedMove);}
+  else{A.classList.remove('locked');document.removeEventListener('mousemove',sfLockedMove);}
+  sfSetHint();sfRender();
+}
+/* raw counts rotate the virtual view; track the peak progress toward the target */
+function sfLockedMove(e){
+  if(!sf||!sf.locked)return;
+  sf.view+=e.movementX*sf.sens*SF_YAW;
+  const prog=(sf.view-sf.view0)*sf.dir;
+  if(prog>sf.progress)sf.progress=prog;
+  sfRender();
+}
+function sfCursorMove(e){if(!sf||sf.locked)return;sf.path.push({x:e.clientX,y:e.clientY});if(sf.path.length>60)sf.path.shift();}
 function spawnSfTarget(){
   if(!sf)return;
   const A=document.getElementById('sfArena');A.innerHTML='';
   const W=A.clientWidth||600,H=A.clientHeight||400;
-  const big=Math.random()<0.5,size=big?(44+Math.random()*14):(18+Math.random()*10);
-  const x=size/2+14+Math.random()*Math.max(1,W-size-28),y=size/2+14+Math.random()*Math.max(1,H-size-28);
+  sf.pxPerDeg=W/SF_FOV;
+  const big=Math.random()<0.5,size=big?(46+Math.random()*16):(20+Math.random()*10);
+  sf.tgtSize=size;sf.tgtTop=H/2;                 // horizontal flick -> target on the centre line
+  sf.angR=(size/2)/sf.pxPerDeg;                  // target radius in degrees
+  sf.dir=Math.random()<0.5?1:-1;
+  sf.dist=6+Math.random()*11;                    // angular distance to target (deg)
+  sf.view=0;sf.view0=0;sf.progress=0;sf.path=[];
+  sf.targetYaw=sf.dir*sf.dist;
   const t=document.createElement('div');t.className='target';
-  t.style.width=t.style.height=size+'px';t.style.left=x+'px';t.style.top=y+'px';
+  t.id='sfTgt';t.style.width=t.style.height=size+'px';
   A.appendChild(t);
-  sf.targetPos={x,y};sf.targetR=size/2;sf.path=[];
-  A.onmousedown=e=>sfHandleClick(e,A);
+  sfRender();
+  A.onmousedown=e=>sfDown(e,A);
 }
-function sfHandleClick(e,A){
+function sfRender(){
+  if(!sf)return;const A=document.getElementById('sfArena');const t=document.getElementById('sfTgt');
+  if(!t)return;const W=A.clientWidth||600;
+  // locked: target slides as the view rotates. cursor mode: target stays at its offset.
+  const x=W/2+(sf.cursorMode?sf.targetYaw:(sf.targetYaw-sf.view))*sf.pxPerDeg;
+  t.style.left=x+'px';t.style.top=sf.tgtTop+'px';
+}
+function sfDown(e,A){
   if(!sf)return;
+  if(sf.cursorMode){sfScoreCursor(e,A);return;}
+  if(sf.locked){sfScoreLocked();return;}
+  // not locked yet — this click grabs the pointer lock and starts the flick test
+  sf.lockTried=true;
+  if(A.requestPointerLock){try{A.requestPointerLock();}catch(_){sf.cursorMode=true;sfSetHint();sfScoreCursor(e,A);}}
+  else{sf.cursorMode=true;sfSetHint();sfScoreCursor(e,A);}
+}
+/* locked flick: bias = how far the ballistic peak went vs. the angle actually needed */
+function sfScoreLocked(){
+  const bias=(sf.progress-sf.dist)/sf.angR;
+  const residual=Math.abs(sf.view-sf.targetYaw)/sf.angR;
+  sfApplyBias(bias,residual,residual<=1,'locked');
+}
+/* cursor fallback: bias = peak projection of the raw cursor path vs. distance to target */
+function sfScoreCursor(e,A){
   const rect=A.getBoundingClientRect();
   const cx=e.clientX-rect.left,cy=e.clientY-rect.top;
-  const tx=sf.targetPos.x,ty=sf.targetPos.y,r=sf.targetR;
+  const tx=(A.clientWidth/2)+sf.targetYaw*sf.pxPerDeg,ty=sf.tgtTop,r=sf.tgtSize/2||1;
   const clickErr=Math.hypot(cx-tx,cy-ty);
   let bias=0;
   if(sf.path.length>=2){
     const s0=sf.path[0],sx=s0.x-rect.left,sy=s0.y-rect.top;
-    const dirX=tx-sx,dirY=ty-sy,dirLen=Math.hypot(dirX,dirY)||1;
-    const ux=dirX/dirLen,uy=dirY/dirLen;
-    let maxProj=-Infinity;
-    sf.path.forEach(p=>{const lx=p.x-rect.left-sx,ly=p.y-rect.top-sy;const proj=lx*ux+ly*uy;if(proj>maxProj)maxProj=proj;});
-    const clickProj=(cx-sx)*ux+(cy-sy)*uy;
-    maxProj=Math.max(maxProj,clickProj);
-    bias=(maxProj-dirLen)/r;
+    const dx=tx-sx,dy=ty-sy,dl=Math.hypot(dx,dy)||1,ux=dx/dl,uy=dy/dl;
+    let peak=-Infinity;
+    sf.path.forEach(p=>{const lx=p.x-rect.left-sx,ly=p.y-rect.top-sy;const pr=lx*ux+ly*uy;if(pr>peak)peak=pr;});
+    peak=Math.max(peak,(cx-sx)*ux+(cy-sy)*uy);
+    bias=(peak-dl)/r;
   }
-  sf.round++;sf.errors.push(clickErr/r);
+  sfApplyBias(bias,clickErr/r,clickErr<=r,'cursor');
+}
+/* shared scoring: classify, nudge sens toward the no-bias value, advance */
+function sfApplyBias(bias,errRatio,landed,modeTag){
   const tol=0.35;let dir;
   if(bias>tol){sf.over++;dir='over';}
   else if(bias<-tol){sf.under++;dir='under';}
   else{sf.perfect++;dir='ok';}
+  sf.round++;sf.errors.push(Math.max(0,errRatio||0));
   sf.recent.push(bias);if(sf.recent.length>8)sf.recent.shift();
-  const adjust=-bias*0.03;
+  const adjust=-bias*0.03;                        // overshoot -> lower sens, undershoot -> raise
   sf.sens=Math.max(0.05,Math.min(20,sf.sens*Math.max(0.85,Math.min(1.15,1+adjust))));
-  sfFlash(tx,ty,clickErr<=r?'var(--good)':(dir==='over'?'var(--bad)':'var(--acc-2)'));
+  const A=document.getElementById('sfArena');
+  const fx=(A.clientWidth/2)+(modeTag==='cursor'?sf.targetYaw:(sf.targetYaw-sf.view))*sf.pxPerDeg;
+  sfFlash(fx,sf.tgtTop,landed?'var(--good)':(dir==='over'?'var(--bad)':'var(--acc-2)'));
   updateSfStats();
   if(sf.round>=sf.total){finishSensFinder();return;}
   spawnSfTarget();
@@ -1499,9 +1584,11 @@ function updateSfStats(){
 }
 function finishSensFinder(){
   clearSfTimers();
-  document.removeEventListener('mousemove',sfTrackMove);
+  document.removeEventListener('mousemove',sfLockedMove);
+  document.removeEventListener('mousemove',sfCursorMove);
+  if(document.pointerLockElement)document.exitPointerLock();
   const A=document.getElementById('sfArena');if(!A)return;
-  A.onmousedown=null;
+  A.classList.remove('locked');A.onmousedown=null;
   const finalCm=sfCmFromSens(sf.sens),finalSens=sf.sens,finalDpi=sf.dpi;
   sf.done={sens:finalSens,dpi:finalDpi,cm:finalCm};
   A.innerHTML=`<div class="msg"><div class="big">${finalCm.toFixed(1)}</div><h2>cm / 360° (odporúčané)</h2>
